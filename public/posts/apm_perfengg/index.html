@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APM and Performance Engineers · Sajeesh Nair</title>
+<meta name="description" content="This is probably just me getting old... I see a major generation gap when I talk to engineers who have been in the field for under 5-6 years. They describe their primary…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/apm_perfengg/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="APM and Performance Engineers">
+<meta property="og:description" content="This is probably just me getting old... I see a major generation gap when I talk to engineers who have been in the field for under 5-6 years. They describe their primary…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/apm_perfengg/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">Performance engineering</span>
+<h1>APM and Performance Engineers</h1>
+<div class="meta"><time datetime="2020-07-07">7 Jul 2020</time><span>560 words</span><span>3 min read</span></div>
+</div>
+<article class="post">
+<p>This is probably just me getting old...</p>
+<p>I see a major generation gap when I talk to engineers who have been in the field for under 5-6 years. They describe their primary performance engineering skill set as an APM tool. They mostly haven't even heard of Brendan Gregg or fundamental tracing methods.</p>
+<p>The engineers are well versed with Dynatrace, AppD and the likes. But they lack the knowledge of underlying concepts. You take the shiny(and pricey) tool away, and they would not know how to find their way around systems. Let alone identifying performance issues.</p>
+<p>I have used these tools extensively myself. I have been a fan of Dynatrace since their early days of UI centric Ajax-Edition. But it seems like these tools can actually make engineers skip a significant learning curve. Especially if the tools are offered to them when they are just getting started. APM tools significantly simplify the monitoring and deep dive for performance issues. To an extent that it actually spoon feeds RCA and recommendations to the performance engineer/developer.</p>
+<p>They don’t actually take time to build their concepts around understanding system architecture, application runtimes and OS behavior. I remember when I started my career one of our mentors made us write code on notepad and stressed on not using an IDE.</p>
+<p>When it comes to deep diving for performance issues, IMHO there are some very basic concepts that an engineer should absolutely know before they start using a tool.</p>
+<p>You should have a good fundamental understanding of following areas and how to monitor them:</p>
+<p><strong>1. OS/System Concepts</strong></p>
+<ul>
+<li>Threads, Process, Context Switching, Load Averages</li>
+<li>Memory – Physical and Virtual , Swapping and paging</li>
+<li>Disks/Storage – IO performance (SSDs vs HDDs)</li>
+<li>Network – Bandwidth, Latency, Bandwidth-Delay-product, OSI Stack(at least TCP layer).</li>
+</ul>
+<p>Any One Operating System would do, I have found Linux to be a good foundation to build this knowledge on.</p>
+<p><strong>2. App/Runtime Concepts</strong></p>
+<ul>
+<li>Memory Management – Garbage Collection, Memory allocation mechanisms(stack/heap)</li>
+<li>Workers – Threads, Thread States, Race Conditions (and how these relate to process)</li>
+</ul>
+<p>Any Application runtime is fine. Java is typically a good starting point because of the abundance of content available on its performance/scalability.</p>
+<p><strong>Special Mention:</strong> Database performance. If you are just getting started you should be able to get by as long as you can point out Slow Queries/Stored Procs.</p>
+<p>Each of the bullets above can itself take a lifetime to become an expert. The idea is to be able to understand at least the basics of these as it applies to the world of performance engineering.</p>
+<p>The APM tools can abstract a lot of these nuances to provide high level views. At the same time these tools also provide an ocean of data points that you can deep dive into. However if you do not understand the significance of these metrics, it is hard to do anything with that information.</p>
+<p>For a good performance engineer an APM tool should be an enabler. It should enable you to get metrics/data that otherwise you would spend longer to dig out. But you would still know how to dig them out. The tool shouldn’t be your strategy.</p>
+<p>Note: APM tools provide a lot of other benefits like Production monitoring, CI/CD streamlining for performance etc. I am not contesting the use of APM tools itself. I am offering my view on how people may prematurely adopt them.</p>
+</article>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/awsvpc/"><small>Older</small><b>Getting Started with AWS VPC</b></a><a class="newer" href="/posts/pe_0/"><small>Newer</small><b>Path to Performance Engineering</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+</body>
+</html>

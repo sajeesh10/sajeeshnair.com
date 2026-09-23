@@ -1,0 +1,19 @@
+# The site is plain HTML in public/, built locally with build.py and committed.
+[build]
+  publish = "public"
+  command = ""
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# old Hugo list pages
+[[redirects]]
+  from = "/page/*"
+  to = "/"
+  status = 301
+[[redirects]]
+  from = "/posts/page/*"
+  to = "/posts/"
+  status = 301

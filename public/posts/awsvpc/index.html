@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Getting Started with AWS VPC · Sajeesh Nair</title>
+<meta name="description" content="I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/awsvpc/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="Getting Started with AWS VPC">
+<meta property="og:description" content="I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/awsvpc/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">Cloud</span>
+<h1>Getting Started with AWS VPC</h1>
+<div class="meta"><time datetime="2019-12-05">5 Dec 2019</time><span>2,707 words</span><span>12 min read</span></div>
+</div>
+<article class="post wide">
+<p>I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info related to VPC setup and make do, but that turned out to be a challenge. I realized that it is important to understand all the pieces of the puzzle when it comes to your VPC and networking. It is much better to invest in a slightly more methodical approach. If you are getting started on AWS Networking and this is your first stint at trying to setup VPC this read should help.</p>
+<h2>My Approach</h2>
+<p>This may not be the best approach, but this works really well for me:</p>
+<ul>
+<li>Start by listing your application components and all the AWS products it uses. E.g. EC2s, Lambda w. API Gateway, S3, RDS, DynamoDB.. you get the point.</li>
+<li>Be clear on network requirements of each component. At a high level you need to know- Who talks to whom, who will send requests to internet, who will only receive requests from internet, who talks to open AWS resources(like S3, DynamoDB etc.).</li>
+<li>In addition to this you should also know the communication ports and protocols they use. If you are building something from scratch you are probably going to use REST/HTTP.</li>
+</ul>
+<p>Don’t worry if you don’t have all the details. At the least you should know the components that needs internet access and the ones that don’t. You can build on top of this as you develop new components.</p>
+<p>Rule of thumb: don’t provide internet access unless really required.</p>
+<h3>Part 0: IP Addresses</h3>
+<p>Before we get into VPC make sure we understand how to manage IP Addresses.</p>
+<p><strong>Public IP Address:</strong> If your EC2 instance needs to be accessed from outside your vpc(e.g. over the internet) then it needs to have a Public IP. Public IP is the identity of your instance for outside world. When you launch an instance, AWS lets you auto-assign a Public IP from its pool of IPs.</p>
+<p>If you don’t want to access the instance from outside your VPC, then it is a good idea to launch the instance with only Private IP. The option to assign/not assign Public IP automatically is provided at instance launch as shown in snapshot below.</p>
+<p><img loading="lazy" alt="" src="/images/vpc-1.png" /></p>
+<p><strong>Private IP address:</strong> Private IP is the identity of your instance within your network(vpc). This IP is not visible/accessible to the outside world and hence gives you a basic layer of security. Public IP is mapped to Private IP using a network address translation. A Private IP is automatically assigned to your instance when it is launched.
+<strong>Point to Remember #1:</strong> An instance can have a primary and a secondary Private IP Address. If the instance has public IP, it must be mapped to one of the private ips. As you would have guessed by now, private ips do not necessarily need to be mapped to public ips. So you could have 2 private ips and 1 public ip.</p>
+<p><strong>Elastic Network Interface(ENI):</strong> think of ENIs as your NIC cards, only virtual. These are logical components very central to networking in AWS.</p>
+<p>You create an ENI into a subnet. Then “typically” associate a primary and a secondary private IP; and 1 or more public/elastic ips corresponding to the private ips. You can also specify security group for the interface. And then you attach the ENI to your EC2 instance(for eg. as eth0 device).</p>
+<p>ENI carries its properties with it as it moves. What that means is if you detach an interface from an instance and attach it to another one the IP addresses, security groups and other configs will carry on to the new instance. This feature comes in handy when you want to keep your instance’s network properties consistent(e.g. IPs) between reboots or new launches.</p>
+<p>An EC2 instance can have multiple ENIs and each ENI can have multiple IP addresses. The number of ENIs per Instance and number of IPs per ENI is defined by aws limits for each instance type. ENIs can be used to address several other more intricate networking use cases. Further reading.</p>
+<p><strong>Elastic IP:</strong> For the most part you should be able to do with using the default public ips that are associated when you start an ec2 instance. The only challenge with them is that they change if your instance reboots. So if your traffic routing works using Public Ip of the ec2, then after a reboot of the instance things get a bit tricky.</p>
+<p>That is where Elastic IP comes into the picture. Elastic IPs are static public IPs that AWS provides to your account. You can associate an EIP with an ENI and attach that ENI to an EC2 or you can directly attach an EIP to an EC2.</p>
+<p>You can associate and dis-associate IPs with EC2 while it is running as well.</p>
+<p>Public IPs are hard to come by and hence AWS is a bit stringent(rightly so!) when it comes to EIP usage. If you allocate an EIP in your account and don’t attach it an instance then you are charged at an hourly rate for it.</p>
+<p>There is a max limit of 5 EIPs from account with the first one being free. Ref: Pricing Details</p>
+<h2>CIDR: Classless Inter-Domain Routing</h2>
+<p>CIDR is method/approach to create/allocate IP addresses. For setting up a vpc you don’t really need to know the details of CIDR. You just need to understand the CIDR Notation of IP Address Ranges.</p>
+<p>As we know, IP Address are mentioned as 4 numbers aaa.bbb.ccc.ddd</p>
+<p>CIDR Notation specifies a way to convey IP ranges by adding a “/nn” at the end of this.</p>
+<p>So for example when an address is mentioned as 10.0.0.0/24,</p>
+<p>This specified an IP address range where start is 10.0.0.0 and end is 10.0.0.255.</p>
+<p>The 24 indicates that the range as 2(32–24) IPs. That is 256 IPs.</p>
+<p>Similarly 172.1.2.0/28 would mean a range of 16 IPs : 2(32–28). I.e. 172.1.2.0 to 172.1.2.15.</p>
+<p>It is best to use a IP calculator when working with IP ranges. I find these couple of calculators handy:</p>
+<p>http://jodies.de/ipcalc</p>
+<p>http://www.subnet-calculator.com/cidr.php</p>
+<p>While creating subnets in a VPC, the IP address ranges of subnets should not overlap.</p>
+<p>The first four IP addresses and the last IP address in each subnet CIDR block are reserved for internal use of AWS and not available for us to assign to EC2s.</p>
+<h2>Part1: Managing Internet Access</h2>
+<p>There are two components in VPC that allow you to manage EC2’s access to the internet. Internet Gateway and NAT Gateway.</p>
+<h3>Internet Gateway:</h3>
+<p>As the name suggests, this is the component that enables an ec2 instance in your vpc to access internet. If any of your ec2 requires access to the internet (which it will) then you need to create an internet gateway for your VPC.</p>
+<p>In order to access internet your ec2 instance needs to have a Public IP(or Elastic IP) and Internet gateway attached.</p>
+<p>IGW is what does the network address translation or mapping of the instance’s Public IP to Private IP. That is when you get a request on the Public IP, IGW routes it to the private IP which is the identity of EC2 instance within the VPC.</p>
+<p>We will go into more details about routing traffic in VPC when we go over Routing Tables.</p>
+<h3>NAT Gateway:</h3>
+<p>Your Private Subnets are closed to internet. However an EC2 in the private subnet could require internet access . And that’s where NAT Gateway comes into the picture.</p>
+<p>NAT(Network Address Translation) Gateway is used when your EC2 needs to initiate connection to internet, but you don’t want anyone on the internet to be able to initiate a connection to the EC2. Typical scenario is say your Database(or any backend) Servers. They would get incoming connections only from other components within your application/vpc. Users on the internet do not need to connect to them. However you may need to do upgrades for say Linux patches or database version etc. For these you need to be able to connect to the internet and download content.</p>
+<p>This is accomplished by placing a NATGW in front of your EC2. The NATGW “is given” a public IP when it is created and that is the IP that will be visible to the internet. NATGW will take care of the address translation to your Private IP and route the responses that are intended for your EC2.</p>
+<p>The NAT Gateway itself is placed in the Public subnet and uses your VPC’s Internet Gateway to route the requests to the internet and back.</p>
+<p>So your requests go like this: EC2 -&gt; NATGW -&gt; IGW -&gt; internet. More on the routing later.</p>
+<p>There are two ways to deploy NATGW, one is NAT Gateway an AWS Service. And the second is a NAT Instance. NAT instance is for cases where you want to handle the scalability of NAT by yourself. In most cases you should be able to do with just NAT Gateway service, and that is what we will focus on in this post.</p>
+<p>If the flow of traffic is not entirely clear to you now, don’t worry about it. We will go into in detail in the next sections.</p>
+<h2>Part 2: Subnets</h2>
+<p>Think of a VPC as your private and fenced piece of real estate within the AWS cloud. Subnets are smaller logically fenced areas within that. Subnets allows you to create logical separation of application entities within your org’s VPC. This allows you to manage the access/security effectively and easily. For example every layer of your application can have its own subnet. The layers that require public access are put in Public Subnet and other more restricted components can be put in Private subnets.</p>
+<p><strong>Public Subnets:</strong> has access to and from internet</p>
+<p><strong>Private Subnets:</strong> mostly accessible within the vpc with some exceptions for outgoing internet requests.</p>
+<p><strong><em>Point to remember #2:</em></strong> Subnets cannot span across AZs. Just like VPCs cannot span across regions.</p>
+<h3>Route Tables:</h3>
+<p>The VPC needs to have some “intelligence” to ensure that EC2s can talk to each other in different subnets/AZs/Regions and they can talk to the internet or other AWS services as required. This is handled by a Router. When you create a VPC AWS gives you a router with it. It is implicit and not something that you will see as a component with configuration options.</p>
+<p>Router routes requests using the Route Tables.</p>
+<p>Route Tables are one of the most important things to understand in Subnets and internal traffic routing. This AWS one liner that defines it best: “A route table contains a set of rules, called routes, that are used to determine where network traffic from your subnet is directed.”</p>
+<p>Every time a request is sent from an EC2 it goes to the Router. The Router then looks up in the Route table to find the answer to “where should I send this request?” Route table has a list of mappings that tells for a requested Destination what should be Target to route the request to.</p>
+<p>Now lets understand how Route Tables work.</p>
+<p>Every VPC has a default route table that is created along with VPC by default. Your can either use this and add routes to it or create your own Custom Route Tables. Every VPC has a Main Route Table. This is the table that is attached by default to every subnet created in that vpc. As you might have guessed the default route table is the Main Route table when vpc is created.</p>
+<p>You can see a VPC’s Main route table in console(example below):</p>
+<p><img loading="lazy" alt="" src="/images/vpc-2.png" /></p>
+<h3>Routes:</h3>
+<p>A route table typically has entries in Target : Destination pair as below:</p>
+<p><img loading="lazy" alt="" src="/images/vpc-3.png" /></p>
+<p>Local Route: This is the route that is present by default in a route table. This defines that all traffic with destination “local”(within vpc) to be sent to that vpc’s cidr block.</p>
+<p>Route for Internet-Gateway: The 2nd rule in the table above is route to internet gateway. It defines that all traffic(0.0.0.0/0) to be routed to IGW.</p>
+<p>Route for NAT-Gateway: If you add a route as below it says that all traffic be routed to NGW.</p>
+<p><img loading="lazy" alt="" src="/images/vpc-4.png" /></p>
+<p>Some of the other routes can include : route to virtual private gateway(required for connecting from cloud to your remote network via Site-to-Site-VPN), Route to peering connection and few others which are we will look at in another post.</p>
+<p>Route Priority: Router always selects the rule most specific destination. For example in the above table, we have an entry for (0.0.0.0/0) which basically specifies rule for all traffic. However there is another rule which has specific IP range(172.31.0.0/16) which is actually a subset of 0.0.0.0/0. So if a request arrive with destination with in this CIDR range then routing is done based on the “local” route. For destinations outside of this range it will route to IGW.</p>
+<h3>Custom Route Tables:</h3>
+<p>It is a good practice to create your own route table and associate it with subnets. Managing traffic with finer control would require you to create multiple route tables anyways.</p>
+<p>You can also replace the Main Route table of the VPC with your custom route table. After this every subnet you create will by default have this route table.</p>
+<p><strong>Point to Remember#3 :</strong> It is not a good idea to have igw routes in main route table. This RT gets associated with a subnet by default. And that means every subnet you create by default has internet access.</p>
+<p>Implicit &amp; Explicit Association: when a subnet is associated to the main RT of the VPC without you explicitly mapping it, that is implicit association. Alternatively you can explicitly associate a route table to a subnet. The end result of both the associations are the same.</p>
+<p><strong>Point to Remember#4 :</strong> one route table can be associated with many subnets, but one subnet can have only 1 route table.</p>
+<p>Public vs Private Subnet: Route Table associations are what makes a subnet public or private.</p>
+<p>A subnet when created, by itself is neither public nor private. If you attached a route table that has a route to Internet-Gateway then that makes it a Public Subnet. If you have only local route or route to NAT-Gateway, then that makes it a Private Subnet.</p>
+<p>Following figure helps summarize this:</p>
+<p>Here I have my two route tables, 1 private(local and NGW routes) and 1 public(local and IGW) routes.</p>
+<p>The private route table is my main route table. And my public route table has 2 explicit subnet associations.</p>
+<p><img loading="lazy" alt="" src="/images/vpc-5.png" /></p>
+<p>Below you can see 4 Subnets(2 Public and 2 Private) that I have created in my VPC.</p>
+<p>The first two are Private Subnet, by being attached to “my_private_rt”. The other 2 are public by being attached to “my_public_rt”.</p>
+<p>Also, as you can see I have same route tables associated with multiple subnets.</p>
+<p><img loading="lazy" alt="" src="/images/vpc-6.png" /></p>
+<p>There are other areas like route-propagation and gateways route tables which we will cover in a later post.</p>
+<h2>Part 3: Security Groups and Network ACLs:</h2>
+<p>AWS provides you two ways to manage the security of your VPC.</p>
+<p>Security Groups: a list of inbound and outbound rules that defines which traffic is allowed to enter and exit an EC2 instance in your VPC.</p>
+<p>Network Access Control Lists(NACL): Which a list of inbound and outbound rules that defines which traffic is allowed to enter and exit a Subnet in your VPC.</p>
+<p>Think of NACL as the outer fence in your VPC’s Subnet and Security Groups as the door into your EC2 instance. Any incoming requests have to get through NACL first before it can get through Security Groups.</p>
+<p>When a subnet it is associated with a NACL. This is typically the NACL of the VPC. You can also define your own NACL and associate with VPC or subnet. A subnet can have multiple NACLs associate with it.</p>
+<p>Similarly when an EC2 instance is launched it either picks the SG from VPC or you can associate one(or more) SGs to it.</p>
+<p>Following is a comparison of the two(ref: AWS Documentation):</p>
+<p><img loading="lazy" alt="" src="/images/vpc-7.png" /></p>
+<p>This covers pretty much the basic building blocks that you would require to get started with a simple application deployment in VPC.</p>
+<p>In future post we will look at understanding setup for different components like EC2, Lambda, Elasticache etc. We will also look at more advanced networking like VPC peering, connecting to remote networks etc.</p>
+</article>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/pe_backups/"><small>Older</small><b>Performance Engineering of Backups</b></a><a class="newer" href="/posts/apm_perfengg/"><small>Newer</small><b>APM and Performance Engineers</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+</body>
+</html>

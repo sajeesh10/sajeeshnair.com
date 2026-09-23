@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>First Principles Thinking · Sajeesh Nair</title>
+<meta name="description" content="I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/firstprinciple/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="First Principles Thinking">
+<meta property="og:description" content="I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/firstprinciple/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">Performance engineering</span>
+<h1>First Principles Thinking</h1>
+<div class="meta"><time datetime="2020-09-11">11 Sep 2020</time><span>679 words</span><span>3 min read</span></div>
+</div>
+<article class="post">
+<p>I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in conversations or there has been an uptick in the last few months. I could mostly glean from the context of conversations what it meant. But I wanted to understand “first principles thinking” from first principles.</p>
+<p>So what is First Principles Thinking anyway?</p>
+<p>Here is the Wikipedia definition:</p>
+<blockquote>
+<p>“A first principle is a basic proposition or assumption that cannot be deduced from any other proposition or assumption.”</p>
+</blockquote>
+<p>That's pretty much it. Assume nothing.</p>
+<p>It is basically a mental model for thinking. And apparently Aristotle and Elon Musk seem to be the poster boy for this approach of looking at problem solving.</p>
+<p>As it turns out, I have been using this mental model for quite sometime now. Until few years back working as a consultant, I was part of a team that specialized in firefighting production performance issues for various customers. The problem statements ranged from application performance to scalability to availability.</p>
+<h3>First Principles Thinking &amp; Performance Problems:</h3>
+<p>Here is how first principles thinking helps crack complex performance/scalability issues:</p>
+<p>All these are observations from my first hand experience. YMMV.</p>
+<p><strong>Ignore all analysis.</strong>  Every time I arrived at the scene there were some analysis and theories provided by the teams around possible causes. Consuming this analysis by definition is opposite of First Principles thinking. Because it has perspectives and can be highly subjective to the person analyzing. Focus only on data and not its interpretation. And if those were good analysis, then it would be great a validation when you arrive at them independently. </p>
+<p><strong>Know the Symptoms.</strong>  It is important to gather as many symptoms of the problem as you can. Symptoms should be derived as much as possible from raw indisputable facts(metrics, metrics, metrics).</p>
+<p>For example:</p>
+<ul>
+<li>
+<p>Good Source for Symptoms: page response times, transaction drop stats, error logs, user error screens, infra metrics etc.</p>
+</li>
+<li>
+<p>Bad Symptoms: “users said app is slow”, “application got slower after the patch”</p>
+</li>
+</ul>
+<p>It is very important to differentiate user perception from user experience. Perception by definition is highly subjective and not quantifiable. User Experience can be measured.</p>
+<p>Having said that, you can neither quantify nor dispute an “Application has crashed” :)</p>
+<p>If you have gathered symptoms well, it gives you a head start into the next step – Defining the problem statement.</p>
+<p><strong>Define Problem Statement.</strong>  This is a much cliched one. But before starting an RCA, define the problem statement. Defining a good problem statement is half the battle won. Good problem statements (pertaining to performance and scalability) usually contain quantification – no subjectivity, no ambiguity. A good problem statement itself describes what is the success criteria for your troubleshooting exercise.</p>
+<p>For example:</p>
+<ul>
+<li>
+<p>Bad Problem statements:</p>
+<ul>
+<li>“Application is slow under load”</li>
+<li>“Observed high CPU Usage”</li>
+</ul>
+</li>
+<li>
+<p>Good Problem statements:</p>
+<ul>
+<li>“Add To Cart degraded from 3 seconds to 10 seconds” </li>
+<li>“All pages degrade by 40% as the TPS increases beyond 5K (list pages and response times)”</li>
+</ul>
+</li>
+</ul>
+<p><strong>Focus on Hard/Raw Metrics.</strong>  Once you have defined the problem statement, use raw(indisputable) metrics to draw up your analysis and conclusions. Strip out any analysis that doesn’t have supporting quantifiable metrics.</p>
+<p><strong>Don’t assume correlation as causality.</strong>  It is very common to look at patterns of different metrics and mistake matching trends as spotting a cause. For all we know all these metrics indicate effect of an underlying cause.</p>
+<p><strong>Know when the problem is solved.</strong> Lastly, once the issue has been RCA’d and fixed, it is important to quantify and say that it has been fixed. You should have the required metrics/monitoring in place to say that the issue has actually been resolved. A lot of times the outcome of a fix is left to be subjective. This leads to difficulty in getting a consensus on success of the exercise.If you have set the problem statement well, odds are that this is already taken care of.</p>
+<p>I hope write more as I apply the first principles thinking more.</p>
+</article>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/pe_3/"><small>Older</small><b>Path to Performance Engineering, Part III: Learning Path</b></a><a class="newer" href="/posts/trust-battery/"><small>Newer</small><b>Trust Battery</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+</body>
+</html>

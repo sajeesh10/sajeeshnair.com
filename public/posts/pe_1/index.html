@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Path to Performance Engineering, Part I: Approach Shift · Sajeesh Nair</title>
+<meta name="description" content="This is the first part of a 3 part series on creating a performance engineering trajectory for yourself. It is important to find inroads within your projects to develop skills. It…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/pe_1/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="Path to Performance Engineering, Part I: Approach Shift">
+<meta property="og:description" content="This is the first part of a 3 part series on creating a performance engineering trajectory for yourself. It is important to find inroads within your projects to develop skills. It…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/pe_1/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">Performance engineering</span>
+<h1>Path to Performance Engineering, Part I: Approach Shift</h1>
+<div class="meta"><time datetime="2020-08-12">12 Aug 2020</time><span>1,881 words</span><span>9 min read</span></div>
+</div>
+<nav class="series" aria-label="Series"><b>Path to Performance Engineering &middot; series</b><ol><li><a href="/posts/pe_0/">Path to Performance Engineering</a></li><li><a href="/posts/pe_1/" aria-current="page">Part I: Approach Shift</a></li><li><a href="/posts/pe_2/">Part II: Tactical Challenges</a></li><li><a href="/posts/pe_3/">Part III: Learning Path</a></li></ol></nav><article class="post">
+<p>This is the first part of a 3 part series on creating a performance engineering trajectory for yourself.</p>
+<p>It is important to find inroads within your projects to develop skills. It is never prudent to wait for that right project to make your move to performance engineering. In this part I talk about how you can start shifting your approach from a black box performance testing to performance engineering. And along the way pick up skills through the projects that you are working on. I also try to throw some light on how to mold your mindset for performance engineering.</p>
+<h3><strong>Mindset Change</strong></h3>
+<p>Performance Testing vs Engineering can be looked at from several lenses but fundamentally it is a mindset change. The skill set will follow intuitively once you have the mindset. You have to start approaching every application with the intent of improving its performance. (Yes, Even when it may not really need improvement). Think - Engineering is building, Testing is validation*. </p>
+<h3><strong>Know the application</strong></h3>
+<p>The main problem that I see is that we test applications without really knowing it. We take a very black box approach.  Simulate critical transactions w. load, measure response times and report them. At times may be we go one step ahead measure the CPU and Memory. </p>
+<p>When you start a project, start by exploring the application as deeply as you can. (And not by trying to find what Load Runner Protocol to use). Your application design has to be an integral part of your NFRs and Test Design. If you know the application well, you will know how to simulate the load even without Load Runner. Aim to understand the performance characteristics of the application, not just to measure it.</p>
+<h3><strong>How do I get to know the application?</strong></h3>
+<p>I tend to look at the application from two dimensions : 1. How is the application used, 2. How does the application work/ behave. </p>
+<p><em>I assume you already have a decent understanding of the application functionality. If not start with that. Know what problem does the application solve for its users. This is the base for both the dimensions.</em></p>
+<p><strong>I. How is the application used:</strong> </p>
+<p>A great way to develop perspective on user expectation is by understanding the customer JTBD (Job To Be Done). This is helpful in understanding what type of response times(performance) will delight the customer and what may be just about acceptable. </p>
+<p>This also helps  build thought process around managing(manipulating) user perception in the solution. But user perception is content for a later post.</p>
+<p><strong>Workload Modeling:</strong> </p>
+<p>This is a term that is abused a lot(IMHO). For effective Load/Scale testing you need to mimic a scenario that will happen in production. This scenario is what we typically refer to as peak period. Workload Modeling means to understand these peak scenarios and build a simulation for them. Get as detailed in this as possible. The accuracy of your modeling determines the value of your test. Poorly modeled tests can result in either false confidence in application or  chasing pseudo bottlenecks. Both can be dangerous.</p>
+<p>Typically I try to cover the below areas(but not limited to it):</p>
+<ol>
+<li>
+<p>Identifying peak scenarios: there can be different type of peaks depending on the application usage. Different type of transactions can dominate different peaks. These transactions in turn could be heavier on different application components and even hardware resources. For example your application may have a peak load period which is Compute heavy and another that is IO heavy. It is important to have some idea of the relative footprint transactions have on the application. </p>
+<p><strong><em>This is why I highly recommend doing workload analysis after you have gained some application knowledge. (which is the step2)</em></strong></p>
+</li>
+<li>
+<p>Transactions and their mix: Once we know what slices of time to simulate(from #1), we try to cover as much detail as possible in simulating it. This means know what users actually do in a session. For ex. most websites have a funnel type traffic pattern, where your landing pages get higher hits and subsequent navigation sees users drop off. So knowing usage pattern is key. Same principle can be applied to job based workloads. </p>
+</li>
+<li>Transaction data: mimicking the data that is used in a user transaction/session.  This means to have the same data as user would have in his or her profile for each page/transaction. For example: if you are simulating a payment flow you would probably add a dummy credit card to user's profile and perform multiple credit card transactions for generating load. However the page can slow down if the customer has 4-5 credit cards added to their profile. This effect can compound when all 1000s of your users have 3-4 credit cards in their profile. Being diligent and paying attention to every small detail is key to getting workload model right.</li>
+<li>Data Volume: along with transaction data(data that is touched by a simulated user transaction) , it is also important to have right volume of data residing in your data stores. Hence populating data to represent prod like volume is important step is getting predictable DB performance. This can get a bit tricky when you don't have a production size environment available. However with some experience you will get hang of how to scale the DB and data for effective testing.</li>
+</ol>
+<p>Workload load modeling is a complex topic and there are different approaches for greenfield and brownfield applications. I will keep it brief here and as this topic needs a dedicated essay. </p>
+<p>Note: Some basic understanding of statistics goes a long a way in effectively modeling your workloads. More about this in <a href="/posts/pe_3/">Part -III</a></p>
+<p><strong>II. How does the application work:</strong></p>
+<p><strong>Architecture:</strong></p>
+<p>Step out of the performance role for a bit. Start with high level architecture. Chances are you will not understand a lot of the tech used. That's OK. Even the top architects don't know all the tech in the world. Note down every term in the architecture you don't understand. Spend time reading about them. More about this in <a href="/posts/pe_3/">Part -III</a></p>
+<p><strong>Call Flows:</strong></p>
+<p>Once you have a fair idea of what every component in your architecture does, start tying together these components with the application transactions. When a user does a particular step(or transaction) how does it use each of these components. Every transaction may not use every component. Start by understanding these call flows. I usually try to get the sequence diagrams. It gives a pretty wholesome picture with right level of details most of the times. Once you know this it is also easier to start deep diving when you find a transaction to be slow.</p>
+<p><strong>Application Runtime:</strong></p>
+<p>Understand the runtime(s) that your application uses. For ex. Java has JVM, Go has Go Runtime, Kafka and ES are build on java so they have JVMs as runtime.  Every language has its own runtime. Here are few axes along which you can start exploring: </p>
+<ol>
+<li>Is the language interpreted or compiled? How does this affect performance?</li>
+<li>Does the runtime manage memory? A managed runtime takes care of memory and scheduling for you. For ex. Java manages memory allocation and thread/process allocations for you. If you write in C++ or Rust you have to do this by yourself. Managed code comes with its own set of (management) overheads. It also gives developers less granular control over memory and CPU utilization.</li>
+<li>Runtime Memory Management: How is memory allocation managed? How does the runtime use Stack and Heap. How does GC work in this language? How does the runtime's memory cost translate to Operating System memory.</li>
+<li>Runtime Task Management/Scheduling: what constructs do this language use, for ex Java has threads, python has threads as well as greenlets, Go has goroutines and so on. Understand how the scheduling of these entities work, i.e. how do they actually get to execute on a CPU. how are they context switched in/out etc.</li>
+<li>
+<p>Application Configuration: You will also come across a lot of enterprise solutions, like SAP or Oracle Coherence etc. These products have their own predefined custom configuration options that you will have to learn about if you are working on them. These are levers provided to be able to tune the performance of these applications. </p>
+<p>The above approach typically holds good for everything except databases. Databases have their own constructs and concepts. I will cover them separately. </p>
+<p>Quick Note on DB performance: In my experience a lot of the tuning can be handled by decent DB developers and config changes can be handled by Admins. As long as you can point out slow queries and look for low hanging items like lack of index(full scans) or hardware bottlenecks, there are mostly people from database teams who can fix these. A basic understanding of AWR(for oracle) and query plan will take you a long way. This is also one of the reasons I have never gained much expertise in complex performance tuning of relational databases. I have often limited myself to problem identification. I am trying to change this with nosql DBs :)    </p>
+</li>
+</ol>
+<p><strong>Operating System:</strong></p>
+<p>Irrespective to what transpires in the above layers, everything runs on the Operating System. OS intermediates the hardware resources for the applications above. So it is important to understand some key concepts:</p>
+<ol>
+<li>How does the OS manage/allocate memory - learn about physical memory, swap space etc. </li>
+<li>How does OS run processes on CPU? Learn about context switches, load averages etc.</li>
+<li>How do File System and Disk Operations happen?</li>
+<li>How do Network Operations happen?</li>
+<li>Learn about the Speed to Cost trade off in <a href="https://en.wikipedia.org/wiki/Memory_hierarchy">Memory Hierarchy</a> -  CPU Registers &gt; CPU Cache &gt; Physical Memory &gt; Flash drives &gt; Disk(spindles) &gt; Tape</li>
+</ol>
+<p><em>It doesn't matter what application or database you are working on, remember every software has these abstract layers : Code(or libraries) &gt; Run-time &gt; Operating System &gt; Hardware.</em></p>
+<p>The last two are usually very tightly knit. </p>
+<p>Armed with the above knowledge, now approach the performance &amp; scalability of your application.</p>
+<p><strong>Lets Tie it all up :</strong> </p>
+<p>When a single user does a Transaction: </p>
+<ul>
+<li>What is the response time/throughput?</li>
+<li>What components does it hit?</li>
+<li>How many threads does the component(say jvm) has to execute for this transaction?</li>
+<li>How much CPU does it consume?</li>
+<li>How much memory does it consume?</li>
+<li>Where does it spend time at - CPU, Disk IO, Network IO?</li>
+</ul>
+<p>When many(1+) users do the same transaction:</p>
+<ul>
+<li>How much does it slow down as compared to above?</li>
+<li>Why does it slow down with load? Does it lack a hardware resource? If yes which one?</li>
+<li>Is it slow but none of the hardware resources are saturated?</li>
+<li>Is the component waiting on a response from downstream? Is the downstream slow to respond?</li>
+<li>Ask same questions on downstream.</li>
+</ul>
+<p>These are just some of the questions you can start asking. But I think by now you get the point. Don't restrict yourself to load simulation(script, execute, report). </p>
+<p>You will find very less to learn in the black box space after a few years and projects will stop being exciting. Or you will move into management roles. If you aim to grow into a tech-inclined career path, then focus on learning technology.</p>
+<p>*One could argue that testing is also technically part of engineering since its feed into the development cycle. In that pure sense performance engineering lies somewhere between traditional development and testing.</p>
+<p>Go back to <a href="/posts/pe_0/">Intro</a></p>
+</article>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/pe_0/"><small>Older</small><b>Path to Performance Engineering</b></a><a class="newer" href="/posts/pe_2/"><small>Newer</small><b>Path to Performance Engineering, Part II: Tactical Challenges</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+</body>
+</html>
