@@ -8,3 +8,5 @@ Plain HTML/CSS blog, hosted on Netlify.
 - Styles are in `static/style.css`.
 
 Build with `pip install markdown && python3 build.py`, which regenerates `public/`. Commit `public/` along with the sources; Netlify serves it as is.
+
+Live at https://sajeeshnair.com (Netlify site "sajeeshnair", production branch `main`).
