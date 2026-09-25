@@ -33,7 +33,7 @@ header.site nav a:hover,header.site nav a[aria-current]{color:var(--red)}
 .hello{padding-block:40px 24px;max-width:34rem}
 .hello h1{font:600 1.55rem/1.3 var(--sans);letter-spacing:-.02em;color:var(--strong);margin:0 0 10px;text-wrap:balance}
 .hello p{margin:0;color:var(--muted)}
-.now{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:11px 0;border-block:1px solid var(--rule);margin-bottom:34px}
+.now{margin-top:30px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:11px 0;border-block:1px solid var(--rule);margin-bottom:34px}
 .now b{font:500 .7rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
 .now span{color:var(--muted);font-size:.95rem}
 

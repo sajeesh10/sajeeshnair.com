@@ -11,8 +11,7 @@ ROOT = pathlib.Path(__file__).parent
 OUT = ROOT / "public"
 SITE = "https://sajeeshnair.com"
 NAME = "Sajeesh Nair"
-INTRO = "I build fast systems and good teams, and write down what I learn."
-INTRO_SUB = "Engineering leader. Performance and systems engineer at heart; these days I write about that and about leading engineers."
+DESC = "Writing by Sajeesh Nair on performance engineering and leadership."
 NOW = "Rebuilding this site from scratch and getting back to writing."
 CUR = ' aria-current="page"'
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
@@ -141,10 +140,9 @@ def build():
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing"), encoding="utf-8")
 
-    home = f"""<section class="hello"><h1>{INTRO}</h1><p>{INTRO_SUB}</p></section>
-<div class="now"><b>Now</b><span>{NOW}</span></div>
+    home = f"""<div class="now"><b>Now</b><span>{NOW}</span></div>
 {index_list(posts)}"""
-    (OUT / "index.html").write_text(page(NAME, home, desc=INTRO_SUB, current="writing"), encoding="utf-8")
+    (OUT / "index.html").write_text(page(NAME, home, desc=DESC, current="writing"), encoding="utf-8")
     (OUT / "posts").mkdir(exist_ok=True)
     (OUT / "posts/index.html").write_text(
         page("Writing", '<section class="hello"><h1>Writing</h1></section>' + index_list(posts), desc="All posts", path="/posts/", current="writing"),
@@ -165,7 +163,7 @@ def build():
 """ for p in posts)
     rss = f"""<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
-<title>{NAME}</title><link>{SITE}/</link><description>{html.escape(INTRO_SUB)}</description><language>en-us</language>
+<title>{NAME}</title><link>{SITE}/</link><description>{html.escape(DESC)}</description><language>en-us</language>
 <atom:link href="{SITE}/index.xml" rel="self" type="application/rss+xml"/>
 {items}</channel></rss>
 """
