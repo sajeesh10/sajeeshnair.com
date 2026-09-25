@@ -34,15 +34,16 @@ header.site nav a:hover,header.site nav a[aria-current]{color:var(--red)}
 .hello{padding-block:40px 24px;max-width:34rem}
 .hello h1{font:600 1.55rem/1.3 var(--sans);letter-spacing:-.02em;color:var(--strong);margin:0 0 10px;text-wrap:balance}
 .hello p{margin:0;color:var(--muted)}
-.banner{margin:34px 0 0}
+.lead{margin-top:34px;background:var(--sheet);border:1px solid var(--rule);padding:22px 24px 24px}
+.banner{margin:0;padding-bottom:16px;border-bottom:1px solid var(--rule)}
 .banner svg{display:block;width:100%;height:auto}
 .fg-ui{font:400 15px var(--mono);fill:var(--muted)}.fg-title{font:600 17px var(--sans);fill:var(--strong)}
 .fg-g1{fill:var(--fg1)}.fg-g2{fill:var(--fg2)}.fg-g3{fill:var(--fg3)}.fg-r1{fill:var(--fr1)}.fg-r2{fill:var(--fr2)}.fg-r3{fill:var(--fr3)}.fg-hot{fill:var(--red)}
 .fg-txt{font:400 15px var(--mono);fill:var(--ink)}.fg-txth{font:500 15px var(--mono);fill:var(--paper)}
-.intro{margin:22px 0 0;max-width:36rem;color:var(--muted);font-size:.95rem;line-height:1.7}
-.now{margin-top:30px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;padding:11px 0;border-block:1px solid var(--rule);margin-bottom:34px}
-.now b{font:500 .7rem/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
-.now span{color:var(--muted);font-size:.95rem}
+.intro{margin:18px 0 0;max-width:36rem;color:var(--muted);font-size:.95rem;line-height:1.7}
+.label{display:flex;align-items:baseline;gap:12px;margin:46px 0 12px;font:500 .72rem/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.label span{color:var(--muted);letter-spacing:.06em;text-transform:none;font-weight:400}
+@media (max-width:520px){.lead{padding:14px 14px 18px;margin-inline:-6px}}
 
 /* post index */
 ul.rows{list-style:none;margin:0;padding:0}

@@ -15,7 +15,6 @@ DESC = "Writing by Sajeesh Nair on performance engineering and leadership."
 INTRO = ("I rarely published my thoughts in the past. Perfect was always the enemy of good. "
          "I was worried my writing would come across as slop. However, in the world of AI slop, "
          "I would like to think that human slop now has a new meaning.")
-NOW = "Rebuilding this site from scratch and getting back to writing."
 CUR = ' aria-current="page"'
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
@@ -151,9 +150,9 @@ def build():
 
     more = f'<p class="more"><a href="/archive/">Earlier technical writing &rarr;</a> <span>{len(archived)} posts, 2014&ndash;2018</span></p>'
     banner = (ROOT / "content/banner.svg").read_text(encoding="utf-8").strip()
-    home = f"""<figure class="banner">{banner}</figure>
-<p class="intro">{INTRO}</p>
-<div class="now"><b>Now</b><span>{NOW}</span></div>
+    home = f"""<section class="lead"><figure class="banner">{banner}</figure>
+<p class="intro">{INTRO}</p></section>
+<h2 class="label">Writing <span>{len(main)} posts</span></h2>
 {index_list(main)}
 {more}"""
     (OUT / "index.html").write_text(page(NAME, home, desc=DESC, current="writing"), encoding="utf-8")
