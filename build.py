@@ -149,8 +149,8 @@ def build():
         (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing"), encoding="utf-8")
 
     more = f'<p class="more"><a href="/archive/">Earlier technical writing &rarr;</a> <span>{len(archived)} posts, 2014&ndash;2018</span></p>'
-    banner = (ROOT / "content/banner.svg").read_text(encoding="utf-8").strip()
-    home = f"""<section class="lead"><figure class="banner">{banner}</figure>
+    banner = (ROOT / "content/banner.html").read_text(encoding="utf-8").strip()
+    home = f"""<section class="lead"><div class="banner">{banner}</div>
 <p class="intro">{INTRO}</p></section>
 <h2 class="label">Writing <span>{len(main)} posts</span></h2>
 {index_list(main)}

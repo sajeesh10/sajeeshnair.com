@@ -21,14 +21,14 @@ tree=N("main",100,
     N("planning",11,N("pessimism",6,N("risks",4)),N("first_principles",4)),
     N("learning",6,N("reading",4,N("notes",2)))),hot=True)
 tree["kids"][1]["kids"][1]["kids"][0]["hot"]=True
+FW=2800
 def flame():
     random.seed(5)
-    L,R=24,976; rowh=27; base=292
+    L,R=0,FW; rowh=27; base=292
     out=[]
-    # chrome of flamegraph.svg
-    out.append(T(L,26,"Reset Zoom","fg-ui"))
-    out.append(T(W/2,26,"Flame Graph","fg-title","middle"))
-    out.append(T(R,26,"Search","fg-ui","end"))
+    # chrome of flamegraph.svg, kept inside the part a desktop screen shows
+    out.append(T(520,26,"Reset Zoom","fg-ui"))
+    out.append(T(FW-520,26,"Search","fg-ui","end"))
     def lay(n,x0,x1,d,side):
         y=base-(d+1)*rowh
         w=x1-x0-1.5
@@ -64,7 +64,7 @@ def flame():
     def root():
         lay(tree,L,R,0,None)
     root()
-    out.append(T(L,314,"Function: coaching (14,020 samples, 14.00%)","fg-ui"))
+    out.append(T(520,314,"Function: coaching (14,020 samples, 14.00%)","fg-ui"))
     return out,320
 
 # ---------- D: distributed trace ----------
@@ -145,5 +145,37 @@ for k,(fn,label) in {"c2":(flame,"A flame graph of systems and team work, with t
  "e":(top,"A top screen whose busiest process is coaching"),
  "f":(git,"A git graph where systems and people branches merge back into main")}.items():
     parts,h=fn()
-    res[k]=f'<svg viewBox="0 0 {W} {h}" role="img" aria-label="{label}" xmlns="http://www.w3.org/2000/svg">'+"".join(parts)+'</svg>'
+    vw=FW if k=="c2" else W
+    par=' preserveAspectRatio="xMidYMax slice"' if k=="c2" else ""
+    res[k]=f'<svg viewBox="0 0 {vw} {h}"{par} role="img" aria-label="{label}" xmlns="http://www.w3.org/2000/svg">'+"".join(parts)+'</svg>'
 json.dump(res,open("banners2.json","w"))
+
+# ---------- C3: the same flame graph in HTML, so it can stretch to any width ----------
+def flame_html():
+    random.seed(5)
+    fr=[]
+    def f(x0,x1,d,cls,label="",op=False):
+        st=f'left:{x0:.2f}%;width:{max(x1-x0-.12,.05):.2f}%;--d:{d}'
+        fr.append(f'<span class="f {cls}{" fade" if op else ""}" style="{st}">{label}</span>')
+    def lay(n,x0,x1,d,side):
+        if d==1: side=n["name"]
+        if n["hot"]: cls="fg-hot"
+        elif side=="teams": cls="fg-r%d"%random.randint(1,3)
+        elif side=="systems": cls="fg-g%d"%random.randint(1,3)
+        else: cls="fg-g3"
+        f(x0,x1,d,cls,n["name"] if x1-x0>=3.5 else "")
+        span=x1-x0; cx=x0
+        for k in n["kids"]:
+            kw=span*k["w"]/n["w"]; lay(k,cx,cx+kw,d+1,side); cx+=kw
+        if not n["kids"] and span>1:
+            cx=x0
+            for i in range(random.randint(1,2)):
+                kw=span*random.uniform(.3,.6)
+                if cx+kw>x1: break
+                f(cx,cx+kw,d+1,"fg-hot" if n["hot"] else cls,"",True); cx+=kw+random.uniform(.2,.8)
+    lay(tree,0,100,0,None)
+    return ('<div class="fg" role="img" aria-label="A flame graph of systems and team work, with the path through trust, feedback and coaching in red">'
+            '<div class="fg-bar"><span>Reset Zoom</span><span>Search</span></div>'
+            '<div class="fg-stack">'+"".join(fr)+'</div>'
+            '<div class="fg-bar"><span>Function: coaching (14,020 samples, 14.00%)</span></div></div>')
+open("banner.html","w").write(flame_html()+"\n")
