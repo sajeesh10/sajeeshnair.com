@@ -48,7 +48,34 @@ def fmt(d, day=True):
     return (f"{d.day} " if day else "") + f"{MONTHS[d.month - 1]} {d.year}"
 
 
-def page(title, body, *, desc="", path="/", current=""):
+# GoatCounter events at 25/50/75/100% of the post body, each sent once per page view.
+# They show up in GoatCounter as paths like "scroll-50/<slug>".
+SCROLL_JS = """<script>
+(function () {
+  var a = document.querySelector("article.post"), left = [25, 50, 75, 100], queue = [];
+  if (!a) return;
+  function flush() {
+    if (!(window.goatcounter && window.goatcounter.count)) return setTimeout(flush, 1000);
+    while (queue.length) {
+      var p = queue.shift();
+      window.goatcounter.count({path: "scroll-" + p + "/SLUG", title: "Scrolled " + p + "%", event: true});
+    }
+  }
+  function check() {
+    var r = a.getBoundingClientRect(), seen = (innerHeight - r.top) / r.height * 100, sent = false;
+    while (left.length && seen >= left[0]) { queue.push(left.shift()); sent = true; }
+    if (sent) flush();
+    if (!left.length) removeEventListener("scroll", onScroll);
+  }
+  var t;
+  function onScroll() { clearTimeout(t); t = setTimeout(check, 200); }
+  addEventListener("scroll", onScroll, {passive: true});
+  addEventListener("load", check);
+})();
+</script>"""
+
+
+def page(title, body, *, desc="", path="/", current="", scroll=""):
     full = NAME if title == NAME else f"{title} · {NAME}"
     nav = "".join(
         f'<a href="{href}"{CUR if current == key else ""}>{label}</a>'
@@ -78,6 +105,8 @@ def page(title, body, *, desc="", path="/", current=""):
 {body}
 <footer><span>&copy; {datetime.date.today().year} {NAME}</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
 </main>
+<script data-goatcounter="https://sajeesh.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+{SCROLL_JS.replace("SLUG", scroll) if scroll else ""}
 </body>
 </html>
 """
@@ -148,7 +177,7 @@ def build():
 <nav class="pn" aria-label="More posts">{pn}</nav>"""
         d = OUT / "posts" / p["slug"]
         d.mkdir(parents=True, exist_ok=True)
-        (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing"), encoding="utf-8")
+        (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing", scroll=p["slug"]), encoding="utf-8")
 
     more = f'<p class="more"><a href="/archive/">Earlier technical writing &rarr;</a> <span>{len(archived)} posts, 2014&ndash;2018</span></p>'
     banner = (ROOT / "content/banner.svg").read_text(encoding="utf-8").strip()

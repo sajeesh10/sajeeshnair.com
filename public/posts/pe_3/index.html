@@ -76,5 +76,29 @@
 <nav class="pn" aria-label="More posts"><a class="older" href="/posts/pe_2/"><small>Older</small><b>Path to Performance Engineering, Part II: Tactical Challenges</b></a><a class="newer" href="/posts/bias/"><small>Newer</small><b>Cognitive Biases in Performance Engineering</b></a></nav>
 <footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
 </main>
+<script data-goatcounter="https://sajeesh.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+(function () {
+  var a = document.querySelector("article.post"), left = [25, 50, 75, 100], queue = [];
+  if (!a) return;
+  function flush() {
+    if (!(window.goatcounter && window.goatcounter.count)) return setTimeout(flush, 1000);
+    while (queue.length) {
+      var p = queue.shift();
+      window.goatcounter.count({path: "scroll-" + p + "/pe_3", title: "Scrolled " + p + "%", event: true});
+    }
+  }
+  function check() {
+    var r = a.getBoundingClientRect(), seen = (innerHeight - r.top) / r.height * 100, sent = false;
+    while (left.length && seen >= left[0]) { queue.push(left.shift()); sent = true; }
+    if (sent) flush();
+    if (!left.length) removeEventListener("scroll", onScroll);
+  }
+  var t;
+  function onScroll() { clearTimeout(t); t = setTimeout(check, 200); }
+  addEventListener("scroll", onScroll, {passive: true});
+  addEventListener("load", check);
+})();
+</script>
 </body>
 </html>
