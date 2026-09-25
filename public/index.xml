@@ -2,45 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>Sajeesh Nair</title><link>https://sajeeshnair.com/</link><description>Writing by Sajeesh Nair on performance engineering and leadership.</description><language>en-us</language>
 <atom:link href="https://sajeeshnair.com/index.xml" rel="self" type="application/rss+xml"/>
-<item><title>The Pragmatic Approach: Using Pessimism to Build Strong and Realistic Engineering Plans</title><link>https://sajeeshnair.com/posts/pessimist/</link><guid>https://sajeeshnair.com/posts/pessimist/</guid>
-<pubDate>Sun, 06 Aug 2023 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;https://cdn-prod.medicalnewstoday.com/content/images/articles/319/319899/glass-half-empty-and-half-full.jpg&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;You sit your team down, explain a big project that the team is going to embark upon. You open the floor for team discussion...&lt;/p&gt;
-&lt;p&gt;You will encounter two types of engineers: The Optimist and The Pessimist&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The Optimist:&lt;/strong&gt; she is excited. She starts discussing how we can break the project down. How to solve certain problems. Who can work on what etc. In her mind she has started working on the project. She has visualized next few weeks of working on it.&lt;/p&gt;
-&lt;p&gt;You get sucked into the discussion and love the brainstorming vibe. You want to hear more.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The Pessimist:&lt;/strong&gt; she shakes her head. Tells you why this project is a bad idea. She will go on to list 136 reasons why this project will fail.&lt;/p&gt;
-&lt;p&gt;Buzz Kill!&lt;/p&gt;
-&lt;p&gt;You try to brush aside concerns.&lt;/p&gt;
-&lt;p&gt;Downplay the conversation.&lt;/p&gt;
-&lt;p&gt;You want to talk more to the other engineer painting a destination postcard of the completed project.&lt;/p&gt;
-&lt;p&gt;Seems familiar?&lt;/p&gt;
-&lt;p&gt;We have all been there.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Don&#x27;t lose the diversity of thoughts:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Pessimists can actually be valuable assets to a team, but many engineering managers tend to overlook their worth.&lt;/p&gt;
-&lt;p&gt;When managed effectively, pessimists can become your secret weapon.&lt;/p&gt;
-&lt;p&gt;That skeptical team member often brings a diversity of thought to the table, and their perspective should be embraced and leveraged to the fullest extent possible. Their ability to identify potential pitfalls and challenges can help the team make more informed decisions and anticipate potential issues before they arise. So, instead of brushing off their concerns, embracing their input can lead to better problem-solving and stronger outcomes for the team.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Unraveling the Execution Puzzle: Dealing with Surprises&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;When it comes to putting plans into action, surprises can be the trickiest hurdle.&lt;/p&gt;
-&lt;p&gt;Steve Jobs aptly puts a mental model of execution challenges in this video.&lt;/p&gt;
-&lt;p&gt;The key to successful execution lies in trying to predict potential risks and consistently addressing them within the plan.&lt;/p&gt;
-&lt;p&gt;But no matter how meticulous the leader or team is, surprises are almost inevitable once execution begins.&lt;/p&gt;
-&lt;p&gt;These unexpected twists and turns can present significant challenges during the implementation of any plan.&lt;/p&gt;
-&lt;p&gt;While it&#x27;s essential to strive for foresight and risk management, surprises remain an integral part of the execution journey, requiring adaptability and quick problem-solving.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Pre-mortems :&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;To address these challenges, there are approaches like &lt;a href=&quot;https://coda.io/@shreyas/pre-mortems&quot;&gt;premortems&lt;/a&gt; , popularized by Shreyas Doshi. 
-A pre-mortem involves bringing stakeholders and the team together to imagine a project&#x27;s failure.They work backward, creating a list of reasons that could lead to that failure.&lt;/p&gt;
-&lt;p&gt;This proactive approach helps identify potential pitfalls and risks early on.&lt;/p&gt;
-&lt;p&gt;Teams can then take preventive measures to boost project success.&lt;/p&gt;
-&lt;p&gt;Envisioning failure scenarios beforehand offers valuable insights.&lt;/p&gt;
-&lt;p&gt;Teams become better equipped to tackle challenges head-on.&lt;/p&gt;
-&lt;p&gt;Ultimately, this enhances the overall project&#x27;s chances of success.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Strength of Pessimists:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The pessimist on the team plays a crucial role by providing pointers similar to those derived from a pre-mortem. These insights enable the manager to plan risk-mitigations and contingencies in advance. By addressing potential challenges early on, surprises at later stages are minimized.&lt;/p&gt;
-&lt;p&gt;Ultimately, embracing the pessimist&#x27;s perspective becomes an invaluable asset in effective project execution.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Conclusion:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;As a manager, go beyond conventional strengths. Leverage diverse traits for the team&#x27;s advantage.&lt;/p&gt;
-&lt;p&gt;Recognize each team member&#x27;s unique qualities. Embrace diverse perspectives, even from the pessimist.&lt;/p&gt;
-&lt;p&gt;Tap into their full potential for a high-performing team.&lt;/p&gt;</description></item>
 <item><title>Beyond the Books: Why Engineering Managers Must Embrace Their Learning Style for Growth</title><link>https://sajeeshnair.com/posts/learningstyle/</link><guid>https://sajeeshnair.com/posts/learningstyle/</guid>
 <pubDate>Tue, 01 Aug 2023 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;https://www.weareteachers.com/wp-content/uploads/2015/04/bad-student.tmb-570.png&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;The best way for you to learn might not be by just reading.&lt;/p&gt;
@@ -118,6 +79,75 @@ Find your learning style.&lt;/p&gt;
 &lt;p&gt;You may find that while the solution is a perfect fit, there may be prevailing factors that may make execution of such a solution impractical.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Conclusion:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Read books and keep &quot;updating&quot; your mental models. Don&#x27;t try to find problems for active-application. The problems will find you.&lt;/p&gt;</description></item>
+<item><title>Trust Battery</title><link>https://sajeeshnair.com/posts/trust-battery/</link><guid>https://sajeeshnair.com/posts/trust-battery/</guid>
+<pubDate>Mon, 30 Jan 2023 00:00:00 +0000</pubDate><description>&lt;p&gt;Trust Battery is coined by Toby Lutke, Shopify CEO. It is a simple mental model that applies the Battery and Charge analogy to Trust between people. &lt;/p&gt;
+&lt;p&gt;My mental model for trust is a slight variant. Especially in the context of workplace and my team.&lt;/p&gt;
+&lt;p&gt;I start all my interactions/relations with 100% Trust. And then if the person doesn&#x27;t live up to the trust level they lose some charge. If they do well it stays at 100%. If someone loses charge(constantly) beyond a level it makes very less sense to invest my time/energy in working with that person.&lt;/p&gt;
+&lt;p&gt;When someone picks up a task(or even an offline favor), I fully trust them to deliver on it. However, I plan some buffer(or a plan-B) in case they fail. In which case they lose some charge. I usually plan to pick up the slack in case I incorrectly trust a person.&lt;/p&gt;
+&lt;h2&gt;Why this works for me:&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Not trusting&lt;/strong&gt; requires a lot of energy. So partly its my laziness.&lt;/p&gt;
+&lt;p&gt;Practically, I have found that a trust-fail-fix approach takes up much less mental bandwidth than not trusting at all.&lt;/p&gt;
+&lt;p&gt;Starting from a place of low-trust means trying to guess all the different ways in which the person could fail. This leads to putting in place precautions/measures to avoid those paths to failure.You are trying to prevent a problem that you don&#x27;t know about. And you do so by going brute force. That is trying to anticipate and solve all those potential problems in your head. This consumes too much mental bandwidth.&lt;/p&gt;
+&lt;p&gt;Instead I feel much more comfortable dealing with this after the fact. i.e. after the person has failed to deliver. There is now one concrete problem to solve. This now requires very focused energy and zero guess work.&lt;/p&gt;
+&lt;p&gt;This has greatly impact the velocity. Going safe is slow. (Fail Fast and Iterate)&lt;/p&gt;
+&lt;p&gt;Lack of trust is usually the underlying rationale for a lot of cumbersome processes that we see in the industry.&lt;/p&gt;
+&lt;h2&gt;And When you Fail...&lt;/h2&gt;
+&lt;p&gt;Solving of problem after the fact could take multiple forms:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;you do the task yourself.&lt;/li&gt;
+&lt;li&gt;you assign someone else(with higher trust) to do the task.&lt;/li&gt;
+&lt;li&gt;you show the person how it needs to be done and let him iterate.&lt;/li&gt;
+&lt;li&gt;most importantly you plan sufficient buffer to allow one of the 3 solutions above.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;What does trust really mean?&lt;/h2&gt;
+&lt;p&gt;I tend to think of trust in two independent lanes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Trust of Motivation/Intention:&lt;/strong&gt; Is the person motivated enough to deliver on a task with 100% commitment?&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Trust of Ability:&lt;/strong&gt; Does the person have the actual skills and knowledge to complete the task?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Without Motivation, Ability is of no use. If there is Motivation, lack of Ability can be bridged given time(implies hard work).&lt;/p&gt;
+&lt;p&gt;If you are working on critical projects, esp. time critical projects, then its very important that you can trust both motivation and ability. But most of the times this is an ideal situation. &lt;/p&gt;
+&lt;p&gt;As a leader it is very important to learn how to keep your team members motivated. If you know how to do that, then all you need to do is have a strong hiring process to find people whose Ability you can trust.&lt;/p&gt;
+&lt;p&gt;Motivating every individual is tricky and probably the biggest challenge for a leader.&lt;/p&gt;</description></item>
+<item><title>The Pragmatic Approach: Using Pessimism to Build Strong and Realistic Engineering Plans</title><link>https://sajeeshnair.com/posts/pessimist/</link><guid>https://sajeeshnair.com/posts/pessimist/</guid>
+<pubDate>Fri, 06 Aug 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;https://cdn-prod.medicalnewstoday.com/content/images/articles/319/319899/glass-half-empty-and-half-full.jpg&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;You sit your team down, explain a big project that the team is going to embark upon. You open the floor for team discussion...&lt;/p&gt;
+&lt;p&gt;You will encounter two types of engineers: The Optimist and The Pessimist&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Optimist:&lt;/strong&gt; she is excited. She starts discussing how we can break the project down. How to solve certain problems. Who can work on what etc. In her mind she has started working on the project. She has visualized next few weeks of working on it.&lt;/p&gt;
+&lt;p&gt;You get sucked into the discussion and love the brainstorming vibe. You want to hear more.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The Pessimist:&lt;/strong&gt; she shakes her head. Tells you why this project is a bad idea. She will go on to list 136 reasons why this project will fail.&lt;/p&gt;
+&lt;p&gt;Buzz Kill!&lt;/p&gt;
+&lt;p&gt;You try to brush aside concerns.&lt;/p&gt;
+&lt;p&gt;Downplay the conversation.&lt;/p&gt;
+&lt;p&gt;You want to talk more to the other engineer painting a destination postcard of the completed project.&lt;/p&gt;
+&lt;p&gt;Seems familiar?&lt;/p&gt;
+&lt;p&gt;We have all been there.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Don&#x27;t lose the diversity of thoughts:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Pessimists can actually be valuable assets to a team, but many engineering managers tend to overlook their worth.&lt;/p&gt;
+&lt;p&gt;When managed effectively, pessimists can become your secret weapon.&lt;/p&gt;
+&lt;p&gt;That skeptical team member often brings a diversity of thought to the table, and their perspective should be embraced and leveraged to the fullest extent possible. Their ability to identify potential pitfalls and challenges can help the team make more informed decisions and anticipate potential issues before they arise. So, instead of brushing off their concerns, embracing their input can lead to better problem-solving and stronger outcomes for the team.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Unraveling the Execution Puzzle: Dealing with Surprises&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When it comes to putting plans into action, surprises can be the trickiest hurdle.&lt;/p&gt;
+&lt;p&gt;Steve Jobs aptly puts a mental model of execution challenges in this video.&lt;/p&gt;
+&lt;p&gt;The key to successful execution lies in trying to predict potential risks and consistently addressing them within the plan.&lt;/p&gt;
+&lt;p&gt;But no matter how meticulous the leader or team is, surprises are almost inevitable once execution begins.&lt;/p&gt;
+&lt;p&gt;These unexpected twists and turns can present significant challenges during the implementation of any plan.&lt;/p&gt;
+&lt;p&gt;While it&#x27;s essential to strive for foresight and risk management, surprises remain an integral part of the execution journey, requiring adaptability and quick problem-solving.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Pre-mortems :&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;To address these challenges, there are approaches like &lt;a href=&quot;https://coda.io/@shreyas/pre-mortems&quot;&gt;premortems&lt;/a&gt; , popularized by Shreyas Doshi. 
+A pre-mortem involves bringing stakeholders and the team together to imagine a project&#x27;s failure.They work backward, creating a list of reasons that could lead to that failure.&lt;/p&gt;
+&lt;p&gt;This proactive approach helps identify potential pitfalls and risks early on.&lt;/p&gt;
+&lt;p&gt;Teams can then take preventive measures to boost project success.&lt;/p&gt;
+&lt;p&gt;Envisioning failure scenarios beforehand offers valuable insights.&lt;/p&gt;
+&lt;p&gt;Teams become better equipped to tackle challenges head-on.&lt;/p&gt;
+&lt;p&gt;Ultimately, this enhances the overall project&#x27;s chances of success.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Strength of Pessimists:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The pessimist on the team plays a crucial role by providing pointers similar to those derived from a pre-mortem. These insights enable the manager to plan risk-mitigations and contingencies in advance. By addressing potential challenges early on, surprises at later stages are minimized.&lt;/p&gt;
+&lt;p&gt;Ultimately, embracing the pessimist&#x27;s perspective becomes an invaluable asset in effective project execution.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Conclusion:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As a manager, go beyond conventional strengths. Leverage diverse traits for the team&#x27;s advantage.&lt;/p&gt;
+&lt;p&gt;Recognize each team member&#x27;s unique qualities. Embrace diverse perspectives, even from the pessimist.&lt;/p&gt;
+&lt;p&gt;Tap into their full potential for a high-performing team.&lt;/p&gt;</description></item>
 <item><title>Building High Performance Cloud Data Protection</title><link>https://sajeeshnair.com/posts/druva_blog/</link><guid>https://sajeeshnair.com/posts/druva_blog/</guid>
 <pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;em&gt;Originally published on the &lt;a href=&quot;https://www.druva.com/blog/building-high-performance-cloud-data-protection/&quot;&gt;Druva blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;For the last 3 years I have had the opportunity to work on some of the hardest problems of scale and performance in the storage domain. Druva&#x27;s data protection is the first of its kind: cloud-native and SaaS from the ground up. This means we are the first ones to solve some of the technical challenges in this space.&lt;/p&gt;
@@ -166,36 +196,6 @@ Find your learning style.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;h2&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Building a successful cloud-based data protection platform requires solving the challenges above, and their solutions can often be contradictory. For example, higher throughput may require more powerful infrastructure, but that may increase customer TCO. The key to customer satisfaction lies in finding an optimal solution that doesn&#x27;t sacrifice performance to meet cost expectations. Any application whose data path traverses large networks will likely have to solve these architectural challenges.&lt;/p&gt;</description></item>
-<item><title>Trust Battery</title><link>https://sajeeshnair.com/posts/trust-battery/</link><guid>https://sajeeshnair.com/posts/trust-battery/</guid>
-<pubDate>Sat, 30 Jan 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;Trust Battery is coined by Toby Lutke, Shopify CEO. It is a simple mental model that applies the Battery and Charge analogy to Trust between people. &lt;/p&gt;
-&lt;p&gt;My mental model for trust is a slight variant. Especially in the context of workplace and my team.&lt;/p&gt;
-&lt;p&gt;I start all my interactions/relations with 100% Trust. And then if the person doesn&#x27;t live up to the trust level they lose some charge. If they do well it stays at 100%. If someone loses charge(constantly) beyond a level it makes very less sense to invest my time/energy in working with that person.&lt;/p&gt;
-&lt;p&gt;When someone picks up a task(or even an offline favor), I fully trust them to deliver on it. However, I plan some buffer(or a plan-B) in case they fail. In which case they lose some charge. I usually plan to pick up the slack in case I incorrectly trust a person.&lt;/p&gt;
-&lt;h2&gt;Why this works for me:&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Not trusting&lt;/strong&gt; requires a lot of energy. So partly its my laziness.&lt;/p&gt;
-&lt;p&gt;Practically, I have found that a trust-fail-fix approach takes up much less mental bandwidth than not trusting at all.&lt;/p&gt;
-&lt;p&gt;Starting from a place of low-trust means trying to guess all the different ways in which the person could fail. This leads to putting in place precautions/measures to avoid those paths to failure.You are trying to prevent a problem that you don&#x27;t know about. And you do so by going brute force. That is trying to anticipate and solve all those potential problems in your head. This consumes too much mental bandwidth.&lt;/p&gt;
-&lt;p&gt;Instead I feel much more comfortable dealing with this after the fact. i.e. after the person has failed to deliver. There is now one concrete problem to solve. This now requires very focused energy and zero guess work.&lt;/p&gt;
-&lt;p&gt;This has greatly impact the velocity. Going safe is slow. (Fail Fast and Iterate)&lt;/p&gt;
-&lt;p&gt;Lack of trust is usually the underlying rationale for a lot of cumbersome processes that we see in the industry.&lt;/p&gt;
-&lt;h2&gt;And When you Fail...&lt;/h2&gt;
-&lt;p&gt;Solving of problem after the fact could take multiple forms:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;you do the task yourself.&lt;/li&gt;
-&lt;li&gt;you assign someone else(with higher trust) to do the task.&lt;/li&gt;
-&lt;li&gt;you show the person how it needs to be done and let him iterate.&lt;/li&gt;
-&lt;li&gt;most importantly you plan sufficient buffer to allow one of the 3 solutions above.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2&gt;What does trust really mean?&lt;/h2&gt;
-&lt;p&gt;I tend to think of trust in two independent lanes:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Trust of Motivation/Intention:&lt;/strong&gt; Is the person motivated enough to deliver on a task with 100% commitment?&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Trust of Ability:&lt;/strong&gt; Does the person have the actual skills and knowledge to complete the task?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Without Motivation, Ability is of no use. If there is Motivation, lack of Ability can be bridged given time(implies hard work).&lt;/p&gt;
-&lt;p&gt;If you are working on critical projects, esp. time critical projects, then its very important that you can trust both motivation and ability. But most of the times this is an ideal situation. &lt;/p&gt;
-&lt;p&gt;As a leader it is very important to learn how to keep your team members motivated. If you know how to do that, then all you need to do is have a strong hiring process to find people whose Ability you can trust.&lt;/p&gt;
-&lt;p&gt;Motivating every individual is tricky and probably the biggest challenge for a leader.&lt;/p&gt;</description></item>
 <item><title>Performance Engineering of Backups</title><link>https://sajeeshnair.com/posts/pe_backups/</link><guid>https://sajeeshnair.com/posts/pe_backups/</guid>
 <pubDate>Tue, 01 May 2018 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;/images/tapes.jpg&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;Two years ago I quit my consulting job to work on the Performance Engineering of one of the most boring sounding workloads in the world of tech: BACKUP.&lt;/p&gt;

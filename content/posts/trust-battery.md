@@ -1,6 +1,6 @@
 ---
 title: Trust Battery
-date: 2021-01-30
+date: 2023-01-30
 topic: Leadership
 ---
 
