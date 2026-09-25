@@ -12,6 +12,7 @@ OUT = ROOT / "public"
 SITE = "https://sajeeshnair.com"
 NAME = "Sajeesh Nair"
 DESC = "Writing by Sajeesh Nair on performance engineering and leadership."
+HUMAN_NOTE = "Written by a human. Expect the odd typo and grammar slip."
 INTRO = ("I rarely published my thoughts in the past. Perfect was always the enemy of good. "
          "I was worried my writing would come across as slop. However, in the world of AI slop, "
          "I would like to think that human slop now has a new meaning.")
@@ -143,6 +144,7 @@ def build():
 {box}<article class="post{wide}">
 {p["html"]}
 </article>
+<p class="human-note">{HUMAN_NOTE}</p>
 <nav class="pn" aria-label="More posts">{pn}</nav>"""
         d = OUT / "posts" / p["slug"]
         d.mkdir(parents=True, exist_ok=True)
