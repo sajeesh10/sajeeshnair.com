@@ -1,8 +1,9 @@
 ---
 title: Path to Performance Engineering, Part II: Tactical Challenges
-date: 2020-08-13
+date: 2016-08-13
 topic: Performance engineering
 series: Path to Performance Engineering
+archive: yes
 ---
 
 This is the second part of a 3 part series on creating a performance engineering trajectory for yourself. In [Part -I](/posts/pe_1/) we looked at how to start shifting your approach towards performance engineering. 

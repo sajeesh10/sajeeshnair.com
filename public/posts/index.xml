@@ -119,12 +119,170 @@ Find your learning style.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Conclusion:&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Read books and keep &quot;updating&quot; your mental models. Don&#x27;t try to find problems for active-application. The problems will find you.&lt;/p&gt;</description></item>
 <item><title>Building High Performance Cloud Data Protection</title><link>https://sajeeshnair.com/posts/druva_blog/</link><guid>https://sajeeshnair.com/posts/druva_blog/</guid>
-<pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;Last 3 years I have had the opportunity to work on some of the hardest problems of scale and performance in storage domain. 
-Druva&#x27;s data protection is the first of its kind. Cloud-native and SaaS ground up. This means we are the first ones to solve some of the technical challenges in this space.
-In this blog I talk about some of the key areas that performance engineers focus on.&lt;/p&gt;
-&lt;p&gt;Please read this essay &lt;a href=&quot;https://www.druva.com/blog/building-high-performance-cloud-data-protection/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;</description></item>
+<pubDate>Thu, 08 Jul 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;em&gt;Originally published on the &lt;a href=&quot;https://www.druva.com/blog/building-high-performance-cloud-data-protection/&quot;&gt;Druva blog&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;For the last 3 years I have had the opportunity to work on some of the hardest problems of scale and performance in the storage domain. Druva&#x27;s data protection is the first of its kind: cloud-native and SaaS from the ground up. This means we are the first ones to solve some of the technical challenges in this space.&lt;/p&gt;
+&lt;p&gt;There are several challenges to be solved in building a successful cloud-based data protection platform, with performance and scalability being especially important. The performance dynamics of a cloud backup solution are completely different from traditional on-premises products, and require a massive shift in how we architect backup solutions.&lt;/p&gt;
+&lt;p&gt;In this essay I cover the factors affecting the performance of cloud backups (for datacenter workloads), and how we at Druva solved them. We break these down in four key focus areas:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Network&lt;/li&gt;
+&lt;li&gt;RTO anxiety&lt;/li&gt;
+&lt;li&gt;Hyperscale cloud file system&lt;/li&gt;
+&lt;li&gt;TCO balance&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;1. Network&lt;/h2&gt;
+&lt;p&gt;Any architecture for cloud-based backup requires taking into consideration the network between customer data centers and the cloud. Moving TBs of data across a network is a hard problem to solve. In addition, the quality of the network can vary greatly based on customers and their ISPs. This begs the question, how do we design a product that reliably meets RPOs and RTOs in the face of these impediments?&lt;/p&gt;
+&lt;h3&gt;Bandwidth optimization&lt;/h3&gt;
+&lt;p&gt;Bandwidth is always a sparse commodity. And lesser bandwidth intuitively means lower performance. However, there are a few ways to design around this:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Compression at the source:&lt;/strong&gt; It is well known that the basic way to improve payload performance over the network is to compress it. On-premises backups often rely on compression as a means to reduce storage needs, and hence compress at the backup device. In the case of cloud backups, it becomes imperative to compress at the source to save bandwidth. There are several compression algorithms that can be used, and it is important to understand the tradeoff between them. Usually, algorithms are compared on the basis of speed (data compressed per unit time), compression ratios yielded, and the CPU footprint that they require. Higher compression ratios require more CPU for a given algorithm. Each algorithm has its strengths: some compress data at a high ratio, but do so at slower speeds resulting in lower throughput.&lt;/p&gt;
+&lt;p&gt;To increase backup efficiency, we implemented methods to skip already compressed files like zip and images. Attempting to compress these formats usually costs CPU cycles and does not yield any compression. Choosing the right compression algorithm for the use case is key for performance. The &lt;a href=&quot;https://quixdb.github.io/squash-benchmark/&quot;&gt;Squash compression benchmark&lt;/a&gt; is a good place to compare algorithms.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Deduplication:&lt;/strong&gt; This process aims to remove duplicate data. By sending only unique data over the network, we further optimize bandwidth usage. Unlike on-premises solutions, Druva does a dedupe check at the source. This is powered by our patented intelligent global deduplication, which checks for dedupe across all data the customer has backed up with Druva to a given AWS region. Our backup sizes are typically only one-third of the customer&#x27;s source data.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Network latency&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Maximize bandwidth usage:&lt;/strong&gt; In data-path-heavy applications like backups, network latencies limit the ability to use the available bandwidth efficiently. This happens because network packets have to wait longer to be acknowledged (at the TCP layer), so the application sending data can fill only part of the available network pipe. One way to solve this would be to use more TCP connections. However, a large number of TCP connections is not a scalable approach from a cloud standpoint. Druva has a multi-tenant cloud which hosts tens of thousands of backups each day. This would result in several thousand, or even millions, of TCP connections, which would cause the servers to choke. Hence, it is important to improve bandwidth utilization with an optimal number of connections. We solve this problem in two ways. First, Druva&#x27;s proprietary protocol (Druva RPC) multiplexes several payloads over a single TCP connection. Second, we use a high number of workers to send a large number of packets without waiting for acknowledgments, to compensate for the delays caused by latency. This enables our agents to use available bandwidth efficiently and overcome the impact of network latency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Request clubbing:&lt;/strong&gt; The best way to avoid latency is to minimize the number of network calls. For this, we club the metadata and data calls at multiple layers. This is built into the Druva RPC protocol. Clubbing requires agents to bundle their calls into one request, and the server to unbundle that request into multiple service calls. Once again, tradeoffs need to be made to ensure that the benefits of minimizing calls are larger than the cost of bundling and unbundling.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;2. RTO anxiety&lt;/h2&gt;
+&lt;p&gt;A common concern when people think about electric cars is range anxiety: the fear that a vehicle has insufficient range to reach its destination and would strand its occupants. For the majority of commutes this is a non-issue. We observed a similar perception mismatch with customers considering cloud-based backup. The prevalent mental model of cloud and networks leads most people to believe that restores over the network will be slow. However, the majority of customer RTO requirements are easily met with Druva&#x27;s solution, and customers don&#x27;t need to buy expensive backup appliances just to address RTO concerns. For customers who have narrow RTOs, Druva also offers CloudCache, which accelerates restores for low-bandwidth, high-latency use cases by maintaining a local copy of the data.&lt;/p&gt;
+&lt;p&gt;To address this perception, we did a detailed exercise in collaboration with AWS. We were able to demonstrate that up to 500 miles from an AWS region, and even with five percent network packet loss, there is marginal impact to restore times compared to local restores. Latency only starts playing a role if a customer on the U.S. East coast tries to restore data from the U.S. West coast (over 2,500 miles). This is unlikely, since customers back up their data to the closest AWS region to get the best possible performance. &lt;a href=&quot;https://aws.amazon.com/blogs/apn/meet-your-recovery-time-objectives-with-druva-and-aws/&quot;&gt;Here is the detailed writeup&lt;/a&gt; of the exercise done with AWS.&lt;/p&gt;
+&lt;h2&gt;3. Hyperscale cloud file system&lt;/h2&gt;
+&lt;p&gt;The sections above focus on how to efficiently send data from the customer&#x27;s premises to the cloud. On the other end is Druva&#x27;s own cloud-native file system. Thousands of backups happen every day on the Druva Cloud, which means several terabytes of source data are processed daily. The Druva Cloud is built on a robust cloud-native file system powered by AWS DynamoDB and AWS S3.&lt;/p&gt;
+&lt;p&gt;It is important to ensure the cloud architecture supports such high throughputs of backup data. Cloud storage provides self-healing properties, which result in continuous consistency and integrity checks of the customer&#x27;s restore points. This ensures a healthy copy of data is always ready when it needs to be restored. All these jobs mean several compute cores, hundreds of S3 puts per second, and heavy network throughput. Architecting a system with these characteristics requires rethinking data protection entirely.&lt;/p&gt;
+&lt;h2&gt;4. TCO balance&lt;/h2&gt;
+&lt;p&gt;One of the key expectations customers have of a cloud and SaaS-based solution is cost effectiveness. A lot of thought goes into designing a solution that keeps total cost of ownership (TCO) as low as possible. However, cost and performance usually sit on opposite sides of the tradeoff. There are a few ways to ensure an optimal balance:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Optimize unit performance:&lt;/strong&gt; The proxies we install on customer premises run on customer-provided hardware or VMs. Hence, it is important to keep the footprint low without compromising RPO requirements. Typically, this means optimizing throughput per unit of footprint: we tune our agents for fewer storage reads, CPU cycles, memory usage and network bandwidth, and focus on metrics like GB per hour of throughput per CPU core.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Cloud compute:&lt;/strong&gt; Backup is a compute-heavy process in the cloud, primarily due to encryption and metadata operations. On AWS, more compute equates to higher cost, so sizing and efficient provisioning become key to cost efficiency. This also means choosing instance types that give a good cost-to-performance balance.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Storage costs:&lt;/strong&gt; S3 storage costs are kept in check with intelligent tiering of customer data under long-term retention. Here, performance is deliberately traded off for lower cost, typically for older or archived data where customers have more relaxed RTOs. S3 PUT costs are kept in check with optimizations like metadata clubbing, or combining data objects into one S3 object. This once again requires understanding the performance tradeoff.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Building a successful cloud-based data protection platform requires solving the challenges above, and their solutions can often be contradictory. For example, higher throughput may require more powerful infrastructure, but that may increase customer TCO. The key to customer satisfaction lies in finding an optimal solution that doesn&#x27;t sacrifice performance to meet cost expectations. Any application whose data path traverses large networks will likely have to solve these architectural challenges.&lt;/p&gt;</description></item>
+<item><title>Trust Battery</title><link>https://sajeeshnair.com/posts/trust-battery/</link><guid>https://sajeeshnair.com/posts/trust-battery/</guid>
+<pubDate>Sat, 30 Jan 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;Trust Battery is coined by Toby Lutke, Shopify CEO. It is a simple mental model that applies the Battery and Charge analogy to Trust between people. &lt;/p&gt;
+&lt;p&gt;My mental model for trust is a slight variant. Especially in the context of workplace and my team.&lt;/p&gt;
+&lt;p&gt;I start all my interactions/relations with 100% Trust. And then if the person doesn&#x27;t live up to the trust level they lose some charge. If they do well it stays at 100%. If someone loses charge(constantly) beyond a level it makes very less sense to invest my time/energy in working with that person.&lt;/p&gt;
+&lt;p&gt;When someone picks up a task(or even an offline favor), I fully trust them to deliver on it. However, I plan some buffer(or a plan-B) in case they fail. In which case they lose some charge. I usually plan to pick up the slack in case I incorrectly trust a person.&lt;/p&gt;
+&lt;h2&gt;Why this works for me:&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Not trusting&lt;/strong&gt; requires a lot of energy. So partly its my laziness.&lt;/p&gt;
+&lt;p&gt;Practically, I have found that a trust-fail-fix approach takes up much less mental bandwidth than not trusting at all.&lt;/p&gt;
+&lt;p&gt;Starting from a place of low-trust means trying to guess all the different ways in which the person could fail. This leads to putting in place precautions/measures to avoid those paths to failure.You are trying to prevent a problem that you don&#x27;t know about. And you do so by going brute force. That is trying to anticipate and solve all those potential problems in your head. This consumes too much mental bandwidth.&lt;/p&gt;
+&lt;p&gt;Instead I feel much more comfortable dealing with this after the fact. i.e. after the person has failed to deliver. There is now one concrete problem to solve. This now requires very focused energy and zero guess work.&lt;/p&gt;
+&lt;p&gt;This has greatly impact the velocity. Going safe is slow. (Fail Fast and Iterate)&lt;/p&gt;
+&lt;p&gt;Lack of trust is usually the underlying rationale for a lot of cumbersome processes that we see in the industry.&lt;/p&gt;
+&lt;h2&gt;And When you Fail...&lt;/h2&gt;
+&lt;p&gt;Solving of problem after the fact could take multiple forms:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;you do the task yourself.&lt;/li&gt;
+&lt;li&gt;you assign someone else(with higher trust) to do the task.&lt;/li&gt;
+&lt;li&gt;you show the person how it needs to be done and let him iterate.&lt;/li&gt;
+&lt;li&gt;most importantly you plan sufficient buffer to allow one of the 3 solutions above.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2&gt;What does trust really mean?&lt;/h2&gt;
+&lt;p&gt;I tend to think of trust in two independent lanes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Trust of Motivation/Intention:&lt;/strong&gt; Is the person motivated enough to deliver on a task with 100% commitment?&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Trust of Ability:&lt;/strong&gt; Does the person have the actual skills and knowledge to complete the task?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Without Motivation, Ability is of no use. If there is Motivation, lack of Ability can be bridged given time(implies hard work).&lt;/p&gt;
+&lt;p&gt;If you are working on critical projects, esp. time critical projects, then its very important that you can trust both motivation and ability. But most of the times this is an ideal situation. &lt;/p&gt;
+&lt;p&gt;As a leader it is very important to learn how to keep your team members motivated. If you know how to do that, then all you need to do is have a strong hiring process to find people whose Ability you can trust.&lt;/p&gt;
+&lt;p&gt;Motivating every individual is tricky and probably the biggest challenge for a leader.&lt;/p&gt;</description></item>
+<item><title>Performance Engineering of Backups</title><link>https://sajeeshnair.com/posts/pe_backups/</link><guid>https://sajeeshnair.com/posts/pe_backups/</guid>
+<pubDate>Tue, 01 May 2018 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;/images/tapes.jpg&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Two years ago I quit my consulting job to work on the Performance Engineering of one of the most boring sounding workloads in the world of tech: BACKUP.&lt;/p&gt;
+&lt;p&gt;Before this I had worked on performance and scalability across the breadth of technology &amp;amp; domain. Enterprise applications, hyper-scale web applications, high throughput banking/finance back-ends, legacy healthcare workflow systems you name it. However &lt;strong&gt;Data-Protection&lt;/strong&gt; was absolutely new to me.&lt;/p&gt;
+&lt;p&gt;In these 2 years, I had the opportunity to work on the forefront of technology in the Cloud based Data Protection space. What I did not realize at the time was that, since we were the first company to protect data by natively backing it up to Cloud(AWS), a huge part of the tech being developed was novel in nature. Most of the reference material available were very On-Premise-Backup inclined, which was the incumbent ecosystem. However, when you backup the data to cloud the rules of the game are very different.&lt;/p&gt;
+&lt;p&gt;As a performance engineer I realized that on-premise backups never had to solve the problem of moving data over the Network. The only network they dealt with were the quick-n-fat pipes of LAN.&lt;/p&gt;
+&lt;p&gt;As simple as it may sound, moving huge amounts of data over network is very hard. And solving this is at the heart of performance engineering of cloud based backups(among several other fun stuff of-course). And that is what makes backup an interesting workload for some hard core performance engineering.&lt;/p&gt;
+&lt;p&gt;In this post I want to share a few things I learnt about performance and scalability of cloud based backup while trying to keep it light on technical details.&lt;/p&gt;
+&lt;h1&gt;&lt;/h1&gt;
+&lt;h1&gt;&lt;/h1&gt;
+&lt;h1&gt;&lt;/h1&gt;
+&lt;p&gt;The architecture typically looks like this: there is an agent that is installed on source system(e.g. a server in customer data center) and there is a server(cloud) that ingests and stores data sent by the agent. Performance engineering involves making sure that agent can push data fast enough and the server can ingest that data at the same pace.&lt;/p&gt;
+&lt;h2&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Less is better:&lt;/strong&gt; Our objective is to protect the data by moving it to cloud. But we want to do this by moving as less of it as possible from premise to cloud. Lesser data to be moved means lesser network traffic, and better performance. As simple as this sounds, this philosophy goes a long way in influencing the core solution.&lt;/p&gt;
+&lt;p&gt;This is primarily achieved by two mechanisms: Compression and De-duplication.&lt;/p&gt;
+&lt;h2&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Compression:&lt;/strong&gt; compression is very key to moving data(remember Pied Piper from Silicon Valley?). Compression gives us the potential to reduce the amount of data sent on the wire drastically. However, this also has performance implications, since it adds a step of data processing. Compression is also a compute intense activity, so it comes at a price that we have to be mindful of. More we compress the data higher the cpu cost, but lower the network and storage costs. There are several compression algorithms that are available. Evaluating and choosing the right one that balances compression ratio and compute needs is key to scalability. Squash Compression Benchmark is a good place to find some very useful statistics.&lt;/p&gt;
+&lt;h2&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;De-duplication:&lt;/strong&gt; dedupe simply means you only backup unique blocks of data and maintain references for every place a block is used. And if dedupe is done before you send data over the wire(source side dedupe) then this gives major gains in performance. However, dedupe checks itself has some cost to performance as it adds one more step in processing of data and it is important to balance the cost vs. benefits while designing the feature.&lt;/p&gt;
+&lt;h2&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;IO sensitivity:&lt;/strong&gt; unlike other workloads that I have worked on before, with data-protection, you become very mindful of IO and its cost at every step of the way. In a nutshell the data is read from one end(source systems) and transmitted out the other end(on network to cloud). And between these two resides your logic and secret ingredient to backup. If your secret ingredient is good, then with minimal compute the application can scale infinitely to exploit all the source IOPs and/or Network bandwidth available. This balancing of compute, disk and network is a major part of day-to-day scalability engineering.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Encryption:&lt;/strong&gt; No data-protection is complete without encrypting the data. Encryption is another level of processing that needs to be done with the data. Typically all encryption is compute intense and hence has major performance impact. Every time data is encrypted(subsequently decrypted) it comes at a cost to performance. Managing this cost is key to scalability of backup solution.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Its not all about IO:&lt;/strong&gt; data backup sounds like a predominantly IO intense activity. But it is also an extremely compute hungry activity. Compression and Encryption both have heavy CPU costs. Even the typical SSL encryption(and decryption) of every payload sent over the network racks up sizeable amount of CPU usage. Other than this there are always activities like splitting and stitching of data blocks etc. which requires CPU. It is critical to tune these CPU bound areas to deliver high performance backups.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;One size does not fit all:&lt;/strong&gt; Different customers have different appetite for backup workloads. Some customers are willing to provide as much resources required to backup the data as soon as possible. This includes very high compute and high bandwidth network like AWS Direct Connect. Some others set aside only few cores and few Mbps of their network to let backups run in the background. The agent needs to be able to shrink or expand to fit the available resources(like occamy). This along with all its performance implications needs to be taken into consideration while designing the product.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Different workload different performance:&lt;/strong&gt; the nature of data that is being backed up is perhaps the biggest deciding factor of backup performance. Files, virtual machines, databases, containers all these workloads have totally different performance dynamics when it comes to backup. How compressible the data is also plays an important part determining performance of backup. On one end of the spectrum there could be text files which compress very well and on the other hand could be media files(movies/images) which are already a compressed format and don’t compress further. Compressing data with low compressiblity also requires higher cpu cycles.&lt;/p&gt;
+&lt;p&gt;The ratio of size of data to the number of files also has a major impact. If the data is fragmented across many small files the IO efficiency at source(reads) and cloud(writes) reduces drastically. And this has major implications for performance of the backup.&lt;/p&gt;
+&lt;p&gt;There are several other ways in which nature of data and workloads determine the backup solution from a performance standpoint. It is a topic worthy of a post for itself.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Petabyte scale data ingestion:&lt;/strong&gt; Cloud based data protection requires hosting several petabytes of data in the cloud. There are several thousand backups pushing several Terabytes of data every day. It is important to ensure that the servers can scale to ingest all this data, do the necessary processing and write it to underlying storage layer. All this while keeping Compute and IO at optimum levels, since in AWS every CPU core and every IO is billed. Hence a lot of thought during design process goes into optimizing/minimizing the compute intense activities and IO operations that are done.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;All things AWS:&lt;/strong&gt; The backup solution is built and hosted ground up in AWS Cloud. This means that for effective performance engineering we need to pay close attention to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Compute : EC2 instance families/types their cpu speeds, EBS bandwidth &amp;amp; Network bandwidth limitations.&lt;/li&gt;
+&lt;li&gt;Block storage: volumes types — ST1/GP2/IO1, their baseline and burst IOPs/throughput specs.&lt;/li&gt;
+&lt;li&gt;Object storage: S3, S3-IA, Glacier, Deep Archive — get/put latency, throughput limits etc.&lt;/li&gt;
+&lt;li&gt;Databases: RDS, DynamoDB and their performance characteristics.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Conclusion: Cloud based backups offer a plethora of problems to be solved as a performance engineer. It ranges from kernel to application runtime to cloud deployments. Certainly not so boring!&lt;/p&gt;</description></item>
+<item><title>First Principles Thinking</title><link>https://sajeeshnair.com/posts/firstprinciple/</link><guid>https://sajeeshnair.com/posts/firstprinciple/</guid>
+<pubDate>Mon, 11 Sep 2017 00:00:00 +0000</pubDate><description>&lt;p&gt;I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in conversations or there has been an uptick in the last few months. I could mostly glean from the context of conversations what it meant. But I wanted to understand “first principles thinking” from first principles.&lt;/p&gt;
+&lt;p&gt;So what is First Principles Thinking anyway?&lt;/p&gt;
+&lt;p&gt;Here is the Wikipedia definition:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“A first principle is a basic proposition or assumption that cannot be deduced from any other proposition or assumption.”&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;That&#x27;s pretty much it. Assume nothing.&lt;/p&gt;
+&lt;p&gt;It is basically a mental model for thinking. And apparently Aristotle and Elon Musk seem to be the poster boy for this approach of looking at problem solving.&lt;/p&gt;
+&lt;p&gt;As it turns out, I have been using this mental model for quite sometime now. Until few years back working as a consultant, I was part of a team that specialized in firefighting production performance issues for various customers. The problem statements ranged from application performance to scalability to availability.&lt;/p&gt;
+&lt;h3&gt;First Principles Thinking &amp;amp; Performance Problems:&lt;/h3&gt;
+&lt;p&gt;Here is how first principles thinking helps crack complex performance/scalability issues:&lt;/p&gt;
+&lt;p&gt;All these are observations from my first hand experience. YMMV.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Ignore all analysis.&lt;/strong&gt;  Every time I arrived at the scene there were some analysis and theories provided by the teams around possible causes. Consuming this analysis by definition is opposite of First Principles thinking. Because it has perspectives and can be highly subjective to the person analyzing. Focus only on data and not its interpretation. And if those were good analysis, then it would be great a validation when you arrive at them independently. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Know the Symptoms.&lt;/strong&gt;  It is important to gather as many symptoms of the problem as you can. Symptoms should be derived as much as possible from raw indisputable facts(metrics, metrics, metrics).&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Good Source for Symptoms: page response times, transaction drop stats, error logs, user error screens, infra metrics etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Bad Symptoms: “users said app is slow”, “application got slower after the patch”&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is very important to differentiate user perception from user experience. Perception by definition is highly subjective and not quantifiable. User Experience can be measured.&lt;/p&gt;
+&lt;p&gt;Having said that, you can neither quantify nor dispute an “Application has crashed” :)&lt;/p&gt;
+&lt;p&gt;If you have gathered symptoms well, it gives you a head start into the next step – Defining the problem statement.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Define Problem Statement.&lt;/strong&gt;  This is a much cliched one. But before starting an RCA, define the problem statement. Defining a good problem statement is half the battle won. Good problem statements (pertaining to performance and scalability) usually contain quantification – no subjectivity, no ambiguity. A good problem statement itself describes what is the success criteria for your troubleshooting exercise.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Bad Problem statements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;“Application is slow under load”&lt;/li&gt;
+&lt;li&gt;“Observed high CPU Usage”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Good Problem statements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;“Add To Cart degraded from 3 seconds to 10 seconds” &lt;/li&gt;
+&lt;li&gt;“All pages degrade by 40% as the TPS increases beyond 5K (list pages and response times)”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Focus on Hard/Raw Metrics.&lt;/strong&gt;  Once you have defined the problem statement, use raw(indisputable) metrics to draw up your analysis and conclusions. Strip out any analysis that doesn’t have supporting quantifiable metrics.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Don’t assume correlation as causality.&lt;/strong&gt;  It is very common to look at patterns of different metrics and mistake matching trends as spotting a cause. For all we know all these metrics indicate effect of an underlying cause.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Know when the problem is solved.&lt;/strong&gt; Lastly, once the issue has been RCA’d and fixed, it is important to quantify and say that it has been fixed. You should have the required metrics/monitoring in place to say that the issue has actually been resolved. A lot of times the outcome of a fix is left to be subjective. This leads to difficulty in getting a consensus on success of the exercise.If you have set the problem statement well, odds are that this is already taken care of.&lt;/p&gt;
+&lt;p&gt;I hope write more as I apply the first principles thinking more.&lt;/p&gt;</description></item>
 <item><title>Cognitive Biases in Performance Engineering</title><link>https://sajeeshnair.com/posts/bias/</link><guid>https://sajeeshnair.com/posts/bias/</guid>
-<pubDate>Mon, 14 Jun 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;I started reading about behavioural psychology a few months back. And I couldn&#x27;t help thinking about all the cognitive traps that a performance engineer faces every day. In this essay I try to expand my own understanding of cognitive biases and how they are relevant to the field of performance engineering. As I learn more about this topic it is very likely that I may update some of the views expressed in this writeup.&lt;/p&gt;
+<pubDate>Wed, 14 Jun 2017 00:00:00 +0000</pubDate><description>&lt;p&gt;I started reading about behavioural psychology a few months back. And I couldn&#x27;t help thinking about all the cognitive traps that a performance engineer faces every day. In this essay I try to expand my own understanding of cognitive biases and how they are relevant to the field of performance engineering. As I learn more about this topic it is very likely that I may update some of the views expressed in this writeup.&lt;/p&gt;
 &lt;p&gt;As a performance engineer it should be our objective to be aware of these traps and train our brain to avoid them.&lt;/p&gt;
 &lt;p&gt;Before we go into the cognitive biases let us understand some of the constructs involved.&lt;/p&gt;
 &lt;h3&gt;Dual-Systems Theory&lt;/h3&gt;
@@ -243,87 +401,8 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;&lt;a href=&quot;https://www.goodreads.com/book/show/38315.Fooled_by_Randomness&quot;&gt;Fooled By Randomness&lt;/a&gt; - N.N. Taleb&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.goodreads.com/book/show/242472.The_Black_Swan&quot;&gt;The Black Swan&lt;/a&gt; - N.N. Taleb&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;http://nature.com/&quot;&gt;Nature.com&lt;/a&gt; article: https://www.nature.com/articles/d41586-021-00592-0&lt;/p&gt;</description></item>
-<item><title>Trust Battery</title><link>https://sajeeshnair.com/posts/trust-battery/</link><guid>https://sajeeshnair.com/posts/trust-battery/</guid>
-<pubDate>Sat, 30 Jan 2021 00:00:00 +0000</pubDate><description>&lt;p&gt;Trust Battery is coined by Toby Lutke, Shopify CEO. It is a simple mental model that applies the Battery and Charge analogy to Trust between people. &lt;/p&gt;
-&lt;p&gt;My mental model for trust is a slight variant. Especially in the context of workplace and my team.&lt;/p&gt;
-&lt;p&gt;I start all my interactions/relations with 100% Trust. And then if the person doesn&#x27;t live up to the trust level they lose some charge. If they do well it stays at 100%. If someone loses charge(constantly) beyond a level it makes very less sense to invest my time/energy in working with that person.&lt;/p&gt;
-&lt;p&gt;When someone picks up a task(or even an offline favor), I fully trust them to deliver on it. However, I plan some buffer(or a plan-B) in case they fail. In which case they lose some charge. I usually plan to pick up the slack in case I incorrectly trust a person.&lt;/p&gt;
-&lt;h2&gt;Why this works for me:&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Not trusting&lt;/strong&gt; requires a lot of energy. So partly its my laziness.&lt;/p&gt;
-&lt;p&gt;Practically, I have found that a trust-fail-fix approach takes up much less mental bandwidth than not trusting at all.&lt;/p&gt;
-&lt;p&gt;Starting from a place of low-trust means trying to guess all the different ways in which the person could fail. This leads to putting in place precautions/measures to avoid those paths to failure.You are trying to prevent a problem that you don&#x27;t know about. And you do so by going brute force. That is trying to anticipate and solve all those potential problems in your head. This consumes too much mental bandwidth.&lt;/p&gt;
-&lt;p&gt;Instead I feel much more comfortable dealing with this after the fact. i.e. after the person has failed to deliver. There is now one concrete problem to solve. This now requires very focused energy and zero guess work.&lt;/p&gt;
-&lt;p&gt;This has greatly impact the velocity. Going safe is slow. (Fail Fast and Iterate)&lt;/p&gt;
-&lt;p&gt;Lack of trust is usually the underlying rationale for a lot of cumbersome processes that we see in the industry.&lt;/p&gt;
-&lt;h2&gt;And When you Fail...&lt;/h2&gt;
-&lt;p&gt;Solving of problem after the fact could take multiple forms:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;you do the task yourself.&lt;/li&gt;
-&lt;li&gt;you assign someone else(with higher trust) to do the task.&lt;/li&gt;
-&lt;li&gt;you show the person how it needs to be done and let him iterate.&lt;/li&gt;
-&lt;li&gt;most importantly you plan sufficient buffer to allow one of the 3 solutions above.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2&gt;What does trust really mean?&lt;/h2&gt;
-&lt;p&gt;I tend to think of trust in two independent lanes:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Trust of Motivation/Intention:&lt;/strong&gt; Is the person motivated enough to deliver on a task with 100% commitment?&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Trust of Ability:&lt;/strong&gt; Does the person have the actual skills and knowledge to complete the task?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Without Motivation, Ability is of no use. If there is Motivation, lack of Ability can be bridged given time(implies hard work).&lt;/p&gt;
-&lt;p&gt;If you are working on critical projects, esp. time critical projects, then its very important that you can trust both motivation and ability. But most of the times this is an ideal situation. &lt;/p&gt;
-&lt;p&gt;As a leader it is very important to learn how to keep your team members motivated. If you know how to do that, then all you need to do is have a strong hiring process to find people whose Ability you can trust.&lt;/p&gt;
-&lt;p&gt;Motivating every individual is tricky and probably the biggest challenge for a leader.&lt;/p&gt;</description></item>
-<item><title>First Principles Thinking</title><link>https://sajeeshnair.com/posts/firstprinciple/</link><guid>https://sajeeshnair.com/posts/firstprinciple/</guid>
-<pubDate>Fri, 11 Sep 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in conversations or there has been an uptick in the last few months. I could mostly glean from the context of conversations what it meant. But I wanted to understand “first principles thinking” from first principles.&lt;/p&gt;
-&lt;p&gt;So what is First Principles Thinking anyway?&lt;/p&gt;
-&lt;p&gt;Here is the Wikipedia definition:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;“A first principle is a basic proposition or assumption that cannot be deduced from any other proposition or assumption.”&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;That&#x27;s pretty much it. Assume nothing.&lt;/p&gt;
-&lt;p&gt;It is basically a mental model for thinking. And apparently Aristotle and Elon Musk seem to be the poster boy for this approach of looking at problem solving.&lt;/p&gt;
-&lt;p&gt;As it turns out, I have been using this mental model for quite sometime now. Until few years back working as a consultant, I was part of a team that specialized in firefighting production performance issues for various customers. The problem statements ranged from application performance to scalability to availability.&lt;/p&gt;
-&lt;h3&gt;First Principles Thinking &amp;amp; Performance Problems:&lt;/h3&gt;
-&lt;p&gt;Here is how first principles thinking helps crack complex performance/scalability issues:&lt;/p&gt;
-&lt;p&gt;All these are observations from my first hand experience. YMMV.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Ignore all analysis.&lt;/strong&gt;  Every time I arrived at the scene there were some analysis and theories provided by the teams around possible causes. Consuming this analysis by definition is opposite of First Principles thinking. Because it has perspectives and can be highly subjective to the person analyzing. Focus only on data and not its interpretation. And if those were good analysis, then it would be great a validation when you arrive at them independently. &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Know the Symptoms.&lt;/strong&gt;  It is important to gather as many symptoms of the problem as you can. Symptoms should be derived as much as possible from raw indisputable facts(metrics, metrics, metrics).&lt;/p&gt;
-&lt;p&gt;For example:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Good Source for Symptoms: page response times, transaction drop stats, error logs, user error screens, infra metrics etc.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Bad Symptoms: “users said app is slow”, “application got slower after the patch”&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;It is very important to differentiate user perception from user experience. Perception by definition is highly subjective and not quantifiable. User Experience can be measured.&lt;/p&gt;
-&lt;p&gt;Having said that, you can neither quantify nor dispute an “Application has crashed” :)&lt;/p&gt;
-&lt;p&gt;If you have gathered symptoms well, it gives you a head start into the next step – Defining the problem statement.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Define Problem Statement.&lt;/strong&gt;  This is a much cliched one. But before starting an RCA, define the problem statement. Defining a good problem statement is half the battle won. Good problem statements (pertaining to performance and scalability) usually contain quantification – no subjectivity, no ambiguity. A good problem statement itself describes what is the success criteria for your troubleshooting exercise.&lt;/p&gt;
-&lt;p&gt;For example:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Bad Problem statements:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;“Application is slow under load”&lt;/li&gt;
-&lt;li&gt;“Observed high CPU Usage”&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Good Problem statements:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;“Add To Cart degraded from 3 seconds to 10 seconds” &lt;/li&gt;
-&lt;li&gt;“All pages degrade by 40% as the TPS increases beyond 5K (list pages and response times)”&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Focus on Hard/Raw Metrics.&lt;/strong&gt;  Once you have defined the problem statement, use raw(indisputable) metrics to draw up your analysis and conclusions. Strip out any analysis that doesn’t have supporting quantifiable metrics.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Don’t assume correlation as causality.&lt;/strong&gt;  It is very common to look at patterns of different metrics and mistake matching trends as spotting a cause. For all we know all these metrics indicate effect of an underlying cause.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Know when the problem is solved.&lt;/strong&gt; Lastly, once the issue has been RCA’d and fixed, it is important to quantify and say that it has been fixed. You should have the required metrics/monitoring in place to say that the issue has actually been resolved. A lot of times the outcome of a fix is left to be subjective. This leads to difficulty in getting a consensus on success of the exercise.If you have set the problem statement well, odds are that this is already taken care of.&lt;/p&gt;
-&lt;p&gt;I hope write more as I apply the first principles thinking more.&lt;/p&gt;</description></item>
 <item><title>Path to Performance Engineering, Part III: Learning Path</title><link>https://sajeeshnair.com/posts/pe_3/</link><guid>https://sajeeshnair.com/posts/pe_3/</guid>
-<pubDate>Fri, 14 Aug 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the last part of a 3 part series on creating a performance engineering trajectory for yourself. In &lt;a href=&quot;/posts/pe_1/&quot;&gt;Part -I&lt;/a&gt; we looked at how to start shifting your approach towards performance engineering. In &lt;a href=&quot;/posts/pe_2/&quot;&gt;Part -II&lt;/a&gt; we addressed some of the tactical challenges that performance testers face. In this part we will talk about how to build a learning path for yourself.&lt;/p&gt;
+<pubDate>Sun, 14 Aug 2016 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the last part of a 3 part series on creating a performance engineering trajectory for yourself. In &lt;a href=&quot;/posts/pe_1/&quot;&gt;Part -I&lt;/a&gt; we looked at how to start shifting your approach towards performance engineering. In &lt;a href=&quot;/posts/pe_2/&quot;&gt;Part -II&lt;/a&gt; we addressed some of the tactical challenges that performance testers face. In this part we will talk about how to build a learning path for yourself.&lt;/p&gt;
 &lt;p&gt;Irrespective of the opportunities that you are offered through your projects, you should create your own learning path. In this section I provide some guidance on how you can setup some short and long term learning goals.&lt;/p&gt;
 &lt;p&gt;To be a good performance engineer, you have to be a good well rounded engineer. You can&#x27;t be just a performance engineer. &lt;/p&gt;
 &lt;p&gt;&lt;em&gt;Take charge of your learning path. Don&#x27;t just rely on your job/projects to provide the learning curve. One project at a time is too slow a pace to grow.&lt;/em&gt;&lt;/p&gt;
@@ -368,7 +447,7 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;It is not possible for any single person to learn and expertise in every single tech on earth. Hence it is very important to have mentors and friends you can lean on from time to time. This forms your Support System. &lt;/p&gt;
 &lt;p&gt;Go back to &lt;a href=&quot;/posts/pe_0/&quot;&gt;Intro&lt;/a&gt;&lt;/p&gt;</description></item>
 <item><title>Path to Performance Engineering, Part II: Tactical Challenges</title><link>https://sajeeshnair.com/posts/pe_2/</link><guid>https://sajeeshnair.com/posts/pe_2/</guid>
-<pubDate>Thu, 13 Aug 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the second part of a 3 part series on creating a performance engineering trajectory for yourself. In &lt;a href=&quot;/posts/pe_1/&quot;&gt;Part -I&lt;/a&gt; we looked at how to start shifting your approach towards performance engineering. &lt;/p&gt;
+<pubDate>Sat, 13 Aug 2016 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the second part of a 3 part series on creating a performance engineering trajectory for yourself. In &lt;a href=&quot;/posts/pe_1/&quot;&gt;Part -I&lt;/a&gt; we looked at how to start shifting your approach towards performance engineering. &lt;/p&gt;
 &lt;p&gt;We all want to go down the path we talked about in Part 1. But there are several day-to-day challenges in actually being able to do so. And this can turn out to be a major impedance in your learning trajectory. &lt;/p&gt;
 &lt;p&gt;So lets address some of the tactical challenges that you may be facing in the field.&lt;/p&gt;
 &lt;h2&gt;&lt;strong&gt;Problem #1: Lack Of Information Sharing&lt;/strong&gt;&lt;/h2&gt;
@@ -413,7 +492,7 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;In &lt;a href=&quot;/posts/pe_3/&quot;&gt;Part -III&lt;/a&gt; we will take a look at the learning path that you can create for yourself, irrespective of what projects you work on.&lt;/p&gt;
 &lt;p&gt;Go back to &lt;a href=&quot;/posts/pe_0/&quot;&gt;Intro&lt;/a&gt;&lt;/p&gt;</description></item>
 <item><title>Path to Performance Engineering, Part I: Approach Shift</title><link>https://sajeeshnair.com/posts/pe_1/</link><guid>https://sajeeshnair.com/posts/pe_1/</guid>
-<pubDate>Wed, 12 Aug 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the first part of a 3 part series on creating a performance engineering trajectory for yourself.&lt;/p&gt;
+<pubDate>Fri, 12 Aug 2016 00:00:00 +0000</pubDate><description>&lt;p&gt;This is the first part of a 3 part series on creating a performance engineering trajectory for yourself.&lt;/p&gt;
 &lt;p&gt;It is important to find inroads within your projects to develop skills. It is never prudent to wait for that right project to make your move to performance engineering. In this part I talk about how you can start shifting your approach from a black box performance testing to performance engineering. And along the way pick up skills through the projects that you are working on. I also try to throw some light on how to mold your mindset for performance engineering.&lt;/p&gt;
 &lt;h3&gt;&lt;strong&gt;Mindset Change&lt;/strong&gt;&lt;/h3&gt;
 &lt;p&gt;Performance Testing vs Engineering can be looked at from several lenses but fundamentally it is a mindset change. The skill set will follow intuitively once you have the mindset. You have to start approaching every application with the intent of improving its performance. (Yes, Even when it may not really need improvement). Think - Engineering is building, Testing is validation*. &lt;/p&gt;
@@ -495,7 +574,7 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;*One could argue that testing is also technically part of engineering since its feed into the development cycle. In that pure sense performance engineering lies somewhere between traditional development and testing.&lt;/p&gt;
 &lt;p&gt;Go back to &lt;a href=&quot;/posts/pe_0/&quot;&gt;Intro&lt;/a&gt;&lt;/p&gt;</description></item>
 <item><title>Path to Performance Engineering</title><link>https://sajeeshnair.com/posts/pe_0/</link><guid>https://sajeeshnair.com/posts/pe_0/</guid>
-<pubDate>Tue, 11 Aug 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;Every 2 years or so I find myself building/ramping up a performance engineering team. And every time I have a hard time finding people with engineering skills. Both in India and outside. Majority of the people have skills limited to black box testing. However,  there is a high level of enthusiasm among these individuals to move into deeper tech roles. They often lack direction/guidance for achieving this . This has prompted me to write this essay.&lt;/p&gt;
+<pubDate>Thu, 11 Aug 2016 00:00:00 +0000</pubDate><description>&lt;p&gt;Every 2 years or so I find myself building/ramping up a performance engineering team. And every time I have a hard time finding people with engineering skills. Both in India and outside. Majority of the people have skills limited to black box testing. However,  there is a high level of enthusiasm among these individuals to move into deeper tech roles. They often lack direction/guidance for achieving this . This has prompted me to write this essay.&lt;/p&gt;
 &lt;p&gt;So how does someone in a vanilla Performance Tester(or even QA) role start moving deeper in the field of performance? I made this transition several years back. Like a lot of the folks reading this, I was in services/consulting role. I hope I can relate to most of the challenges that you face today. &lt;/p&gt;
 &lt;p&gt;What this is not: This is not an exhaustive &quot;How to become a performance engineer&quot; guide. There are lot of topics which I have not covered in this. The intent of this essay is to just get you started.&lt;/p&gt;
 &lt;p&gt;These are only guidelines. And YMMV.&lt;/p&gt;
@@ -504,7 +583,7 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;&lt;strong&gt;Part - II: Tactical Challenges:&lt;/strong&gt; Here I try to address most of the tactical/day-to-day challenges that performance testers face in their projects. I draw these points mostly from my experience and from my conversations with performance engineering aspirants. &lt;a href=&quot;/posts/pe_2/&quot;&gt;Read More ...&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Part - III: Learning Path:&lt;/strong&gt; In this part I cover how you can start building your framework for continuous learning. This should help you continue to learn over years as you mature into a performance architect. &lt;a href=&quot;/posts/pe_3/&quot;&gt;Read More...&lt;/a&gt;&lt;/p&gt;</description></item>
 <item><title>APM and Performance Engineers</title><link>https://sajeeshnair.com/posts/apm_perfengg/</link><guid>https://sajeeshnair.com/posts/apm_perfengg/</guid>
-<pubDate>Tue, 07 Jul 2020 00:00:00 +0000</pubDate><description>&lt;p&gt;This is probably just me getting old...&lt;/p&gt;
+<pubDate>Tue, 07 Jul 2015 00:00:00 +0000</pubDate><description>&lt;p&gt;This is probably just me getting old...&lt;/p&gt;
 &lt;p&gt;I see a major generation gap when I talk to engineers who have been in the field for under 5-6 years. They describe their primary performance engineering skill set as an APM tool. They mostly haven&#x27;t even heard of Brendan Gregg or fundamental tracing methods.&lt;/p&gt;
 &lt;p&gt;The engineers are well versed with Dynatrace, AppD and the likes. But they lack the knowledge of underlying concepts. You take the shiny(and pricey) tool away, and they would not know how to find their way around systems. Let alone identifying performance issues.&lt;/p&gt;
 &lt;p&gt;I have used these tools extensively myself. I have been a fan of Dynatrace since their early days of UI centric Ajax-Edition. But it seems like these tools can actually make engineers skip a significant learning curve. Especially if the tools are offered to them when they are just getting started. APM tools significantly simplify the monitoring and deep dive for performance issues. To an extent that it actually spoon feeds RCA and recommendations to the performance engineer/developer.&lt;/p&gt;
@@ -531,7 +610,7 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;For a good performance engineer an APM tool should be an enabler. It should enable you to get metrics/data that otherwise you would spend longer to dig out. But you would still know how to dig them out. The tool shouldn’t be your strategy.&lt;/p&gt;
 &lt;p&gt;Note: APM tools provide a lot of other benefits like Production monitoring, CI/CD streamlining for performance etc. I am not contesting the use of APM tools itself. I am offering my view on how people may prematurely adopt them.&lt;/p&gt;</description></item>
 <item><title>Getting Started with AWS VPC</title><link>https://sajeeshnair.com/posts/awsvpc/</link><guid>https://sajeeshnair.com/posts/awsvpc/</guid>
-<pubDate>Thu, 05 Dec 2019 00:00:00 +0000</pubDate><description>&lt;p&gt;I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info related to VPC setup and make do, but that turned out to be a challenge. I realized that it is important to understand all the pieces of the puzzle when it comes to your VPC and networking. It is much better to invest in a slightly more methodical approach. If you are getting started on AWS Networking and this is your first stint at trying to setup VPC this read should help.&lt;/p&gt;
+<pubDate>Fri, 05 Dec 2014 00:00:00 +0000</pubDate><description>&lt;p&gt;I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info related to VPC setup and make do, but that turned out to be a challenge. I realized that it is important to understand all the pieces of the puzzle when it comes to your VPC and networking. It is much better to invest in a slightly more methodical approach. If you are getting started on AWS Networking and this is your first stint at trying to setup VPC this read should help.&lt;/p&gt;
 &lt;h2&gt;My Approach&lt;/h2&gt;
 &lt;p&gt;This may not be the best approach, but this works really well for me:&lt;/p&gt;
 &lt;ul&gt;
@@ -636,40 +715,4 @@ In this blog I talk about some of the key areas that performance engineers focus
 &lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;/images/vpc-7.png&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;This covers pretty much the basic building blocks that you would require to get started with a simple application deployment in VPC.&lt;/p&gt;
 &lt;p&gt;In future post we will look at understanding setup for different components like EC2, Lambda, Elasticache etc. We will also look at more advanced networking like VPC peering, connecting to remote networks etc.&lt;/p&gt;</description></item>
-<item><title>Performance Engineering of Backups</title><link>https://sajeeshnair.com/posts/pe_backups/</link><guid>https://sajeeshnair.com/posts/pe_backups/</guid>
-<pubDate>Wed, 01 May 2019 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;/images/tapes.jpg&quot; /&gt;&lt;/p&gt;
-&lt;p&gt;Two years ago I quit my consulting job to work on the Performance Engineering of one of the most boring sounding workloads in the world of tech: BACKUP.&lt;/p&gt;
-&lt;p&gt;Before this I had worked on performance and scalability across the breadth of technology &amp;amp; domain. Enterprise applications, hyper-scale web applications, high throughput banking/finance back-ends, legacy healthcare workflow systems you name it. However &lt;strong&gt;Data-Protection&lt;/strong&gt; was absolutely new to me.&lt;/p&gt;
-&lt;p&gt;In these 2 years, I had the opportunity to work on the forefront of technology in the Cloud based Data Protection space. What I did not realize at the time was that, since we were the first company to protect data by natively backing it up to Cloud(AWS), a huge part of the tech being developed was novel in nature. Most of the reference material available were very On-Premise-Backup inclined, which was the incumbent ecosystem. However, when you backup the data to cloud the rules of the game are very different.&lt;/p&gt;
-&lt;p&gt;As a performance engineer I realized that on-premise backups never had to solve the problem of moving data over the Network. The only network they dealt with were the quick-n-fat pipes of LAN.&lt;/p&gt;
-&lt;p&gt;As simple as it may sound, moving huge amounts of data over network is very hard. And solving this is at the heart of performance engineering of cloud based backups(among several other fun stuff of-course). And that is what makes backup an interesting workload for some hard core performance engineering.&lt;/p&gt;
-&lt;p&gt;In this post I want to share a few things I learnt about performance and scalability of cloud based backup while trying to keep it light on technical details.&lt;/p&gt;
-&lt;h1&gt;&lt;/h1&gt;
-&lt;h1&gt;&lt;/h1&gt;
-&lt;h1&gt;&lt;/h1&gt;
-&lt;p&gt;The architecture typically looks like this: there is an agent that is installed on source system(e.g. a server in customer data center) and there is a server(cloud) that ingests and stores data sent by the agent. Performance engineering involves making sure that agent can push data fast enough and the server can ingest that data at the same pace.&lt;/p&gt;
-&lt;h2&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Less is better:&lt;/strong&gt; Our objective is to protect the data by moving it to cloud. But we want to do this by moving as less of it as possible from premise to cloud. Lesser data to be moved means lesser network traffic, and better performance. As simple as this sounds, this philosophy goes a long way in influencing the core solution.&lt;/p&gt;
-&lt;p&gt;This is primarily achieved by two mechanisms: Compression and De-duplication.&lt;/p&gt;
-&lt;h2&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Compression:&lt;/strong&gt; compression is very key to moving data(remember Pied Piper from Silicon Valley?). Compression gives us the potential to reduce the amount of data sent on the wire drastically. However, this also has performance implications, since it adds a step of data processing. Compression is also a compute intense activity, so it comes at a price that we have to be mindful of. More we compress the data higher the cpu cost, but lower the network and storage costs. There are several compression algorithms that are available. Evaluating and choosing the right one that balances compression ratio and compute needs is key to scalability. Squash Compression Benchmark is a good place to find some very useful statistics.&lt;/p&gt;
-&lt;h2&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;De-duplication:&lt;/strong&gt; dedupe simply means you only backup unique blocks of data and maintain references for every place a block is used. And if dedupe is done before you send data over the wire(source side dedupe) then this gives major gains in performance. However, dedupe checks itself has some cost to performance as it adds one more step in processing of data and it is important to balance the cost vs. benefits while designing the feature.&lt;/p&gt;
-&lt;h2&gt;&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;IO sensitivity:&lt;/strong&gt; unlike other workloads that I have worked on before, with data-protection, you become very mindful of IO and its cost at every step of the way. In a nutshell the data is read from one end(source systems) and transmitted out the other end(on network to cloud). And between these two resides your logic and secret ingredient to backup. If your secret ingredient is good, then with minimal compute the application can scale infinitely to exploit all the source IOPs and/or Network bandwidth available. This balancing of compute, disk and network is a major part of day-to-day scalability engineering.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Encryption:&lt;/strong&gt; No data-protection is complete without encrypting the data. Encryption is another level of processing that needs to be done with the data. Typically all encryption is compute intense and hence has major performance impact. Every time data is encrypted(subsequently decrypted) it comes at a cost to performance. Managing this cost is key to scalability of backup solution.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Its not all about IO:&lt;/strong&gt; data backup sounds like a predominantly IO intense activity. But it is also an extremely compute hungry activity. Compression and Encryption both have heavy CPU costs. Even the typical SSL encryption(and decryption) of every payload sent over the network racks up sizeable amount of CPU usage. Other than this there are always activities like splitting and stitching of data blocks etc. which requires CPU. It is critical to tune these CPU bound areas to deliver high performance backups.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;One size does not fit all:&lt;/strong&gt; Different customers have different appetite for backup workloads. Some customers are willing to provide as much resources required to backup the data as soon as possible. This includes very high compute and high bandwidth network like AWS Direct Connect. Some others set aside only few cores and few Mbps of their network to let backups run in the background. The agent needs to be able to shrink or expand to fit the available resources(like occamy). This along with all its performance implications needs to be taken into consideration while designing the product.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Different workload different performance:&lt;/strong&gt; the nature of data that is being backed up is perhaps the biggest deciding factor of backup performance. Files, virtual machines, databases, containers all these workloads have totally different performance dynamics when it comes to backup. How compressible the data is also plays an important part determining performance of backup. On one end of the spectrum there could be text files which compress very well and on the other hand could be media files(movies/images) which are already a compressed format and don’t compress further. Compressing data with low compressiblity also requires higher cpu cycles.&lt;/p&gt;
-&lt;p&gt;The ratio of size of data to the number of files also has a major impact. If the data is fragmented across many small files the IO efficiency at source(reads) and cloud(writes) reduces drastically. And this has major implications for performance of the backup.&lt;/p&gt;
-&lt;p&gt;There are several other ways in which nature of data and workloads determine the backup solution from a performance standpoint. It is a topic worthy of a post for itself.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Petabyte scale data ingestion:&lt;/strong&gt; Cloud based data protection requires hosting several petabytes of data in the cloud. There are several thousand backups pushing several Terabytes of data every day. It is important to ensure that the servers can scale to ingest all this data, do the necessary processing and write it to underlying storage layer. All this while keeping Compute and IO at optimum levels, since in AWS every CPU core and every IO is billed. Hence a lot of thought during design process goes into optimizing/minimizing the compute intense activities and IO operations that are done.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;All things AWS:&lt;/strong&gt; The backup solution is built and hosted ground up in AWS Cloud. This means that for effective performance engineering we need to pay close attention to:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Compute : EC2 instance families/types their cpu speeds, EBS bandwidth &amp;amp; Network bandwidth limitations.&lt;/li&gt;
-&lt;li&gt;Block storage: volumes types — ST1/GP2/IO1, their baseline and burst IOPs/throughput specs.&lt;/li&gt;
-&lt;li&gt;Object storage: S3, S3-IA, Glacier, Deep Archive — get/put latency, throughput limits etc.&lt;/li&gt;
-&lt;li&gt;Databases: RDS, DynamoDB and their performance characteristics.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Conclusion: Cloud based backups offer a plethora of problems to be solved as a performance engineer. It ranges from kernel to application runtime to cloud deployments. Certainly not so boring!&lt;/p&gt;</description></item>
 </channel></rss>

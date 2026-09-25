@@ -118,3 +118,6 @@ blockquote p:last-child{margin:0}
   ul.rows li a{grid-template-columns:2.2rem minmax(0,1fr);gap:0 10px}
   ul.rows time{grid-column:2}
 }
+.more{margin:22px 0 0;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:400 .82rem/1.6 var(--mono);color:var(--muted)}
+.more a{color:var(--ink)}
+.more a:hover{color:var(--red)}

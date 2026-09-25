@@ -111,9 +111,14 @@ def build():
 
     series = sorted([p for p in posts if p.get("series")], key=lambda p: p["date"])
 
-    for i, p in enumerate(posts):
-        newer = posts[i - 1] if i > 0 else None
-        older = posts[i + 1] if i + 1 < len(posts) else None
+    main = [p for p in posts if not p.get("archive")]
+    archived = [p for p in posts if p.get("archive")]
+
+    for p in posts:
+        group = archived if p.get("archive") else main
+        i = group.index(p)
+        newer = group[i - 1] if i > 0 else None
+        older = group[i + 1] if i + 1 < len(group) else None
         pn = ""
         if older:
             pn += f'<a class="older" href="/posts/{older["slug"]}/"><small>Older</small><b>{html.escape(older["title"])}</b></a>'
@@ -126,7 +131,8 @@ def build():
                 for s in series)
             box = f'<nav class="series" aria-label="Series"><b>{html.escape(p["series"])} &middot; series</b><ol>{items}</ol></nav>'
         wide = " wide" if "<img" in p["html"] else ""
-        body = f"""<a class="back" href="/">&larr; all writing</a>
+        back, back_label = ("/archive/", "earlier technical writing") if p.get("archive") else ("/", "all writing")
+        body = f"""<a class="back" href="{back}">&larr; {back_label}</a>
 <div class="post-head">
 <span class="kicker">{html.escape(p["topic"])}</span>
 <h1>{html.escape(p["title"])}</h1>
@@ -140,12 +146,21 @@ def build():
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing"), encoding="utf-8")
 
+    more = f'<p class="more"><a href="/archive/">Earlier technical writing &rarr;</a> <span>{len(archived)} posts, 2014&ndash;2018</span></p>'
     home = f"""<div class="now"><b>Now</b><span>{NOW}</span></div>
-{index_list(posts)}"""
+{index_list(main)}
+{more}"""
     (OUT / "index.html").write_text(page(NAME, home, desc=DESC, current="writing"), encoding="utf-8")
     (OUT / "posts").mkdir(exist_ok=True)
     (OUT / "posts/index.html").write_text(
-        page("Writing", '<section class="hello"><h1>Writing</h1></section>' + index_list(posts), desc="All posts", path="/posts/", current="writing"),
+        page("Writing", '<section class="hello"><h1>Writing</h1></section>' + index_list(main) + more, desc="All posts", path="/posts/", current="writing"),
+        encoding="utf-8")
+
+    (OUT / "archive").mkdir(exist_ok=True)
+    (OUT / "archive/index.html").write_text(
+        page("Earlier technical writing",
+             '<section class="hello"><h1>Earlier technical writing</h1><p>Hands-on performance engineering notes from 2014 to 2018.</p></section>' + index_list(archived),
+             desc="Earlier technical writing by Sajeesh Nair", path="/archive/", current="writing"),
         encoding="utf-8")
 
     for name in ("about", "podcast"):
@@ -170,7 +185,7 @@ def build():
     (OUT / "index.xml").write_text(rss, encoding="utf-8")
     (OUT / "posts/index.xml").write_text(rss, encoding="utf-8")
 
-    urls = ["/", "/about/", "/podcast/", "/posts/"] + [f"/posts/{p['slug']}/" for p in posts]
+    urls = ["/", "/about/", "/podcast/", "/posts/", "/archive/"] + [f"/posts/{p['slug']}/" for p in posts]
     (OUT / "sitemap.xml").write_text('<?xml version="1.0" encoding="utf-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
                                      + "".join(f"<url><loc>{SITE}{u}</loc></url>" for u in urls) + "</urlset>\n", encoding="utf-8")
     (OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")

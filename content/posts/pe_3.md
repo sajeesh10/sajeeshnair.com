@@ -1,8 +1,9 @@
 ---
 title: Path to Performance Engineering, Part III: Learning Path
-date: 2020-08-14
+date: 2016-08-14
 topic: Performance engineering
 series: Path to Performance Engineering
+archive: yes
 ---
 
 This is the last part of a 3 part series on creating a performance engineering trajectory for yourself. In [Part -I](/posts/pe_1/) we looked at how to start shifting your approach towards performance engineering. In [Part -II](/posts/pe_2/) we addressed some of the tactical challenges that performance testers face. In this part we will talk about how to build a learning path for yourself.

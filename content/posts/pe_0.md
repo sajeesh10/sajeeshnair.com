@@ -1,8 +1,9 @@
 ---
 title: Path to Performance Engineering
-date: 2020-08-11
+date: 2016-08-11
 topic: Performance engineering
 series: Path to Performance Engineering
+archive: yes
 ---
 
 Every 2 years or so I find myself building/ramping up a performance engineering team. And every time I have a hard time finding people with engineering skills. Both in India and outside. Majority of the people have skills limited to black box testing. However,  there is a high level of enthusiasm among these individuals to move into deeper tech roles. They often lack direction/guidance for achieving this . This has prompted me to write this essay.

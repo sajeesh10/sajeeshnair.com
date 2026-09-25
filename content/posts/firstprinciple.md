@@ -1,7 +1,8 @@
 ---
 title: First Principles Thinking
-date: 2020-09-11
+date: 2017-09-11
 topic: Performance engineering
+archive: yes
 ---
 
 I started noticing this phrase a lot in the last few months. It sounded like this cool concept that I was very late in learning. I don’t know if it was already widely used in conversations or there has been an uptick in the last few months. I could mostly glean from the context of conversations what it meant. But I wanted to understand “first principles thinking” from first principles.

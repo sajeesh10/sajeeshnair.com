@@ -1,8 +1,9 @@
 ---
 title: Path to Performance Engineering, Part I: Approach Shift
-date: 2020-08-12
+date: 2016-08-12
 topic: Performance engineering
 series: Path to Performance Engineering
+archive: yes
 ---
 
 This is the first part of a 3 part series on creating a performance engineering trajectory for yourself.

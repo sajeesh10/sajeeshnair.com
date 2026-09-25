@@ -1,7 +1,8 @@
 ---
 title: Getting Started with AWS VPC
-date: 2019-12-05
+date: 2014-12-05
 topic: Cloud
+archive: yes
 ---
 
 I recently had a chance to deploy an application end to end in AWS. I found the networking part of it especially interesting. I initially tried to just pick up bits of info related to VPC setup and make do, but that turned out to be a challenge. I realized that it is important to understand all the pieces of the puzzle when it comes to your VPC and networking. It is much better to invest in a slightly more methodical approach. If you are getting started on AWS Networking and this is your first stint at trying to setup VPC this read should help.
