@@ -5,11 +5,11 @@ topic: Leadership
 ---
 
 
-One of the things that I learnt and found to be highly powerful is to..
+One of the things that I learnt doing sales and pre sales in large enterprise and found to be highly powerful is to..
 Make sure that Your Champion Succeeds. Even if your product does not. 
 
 This approach is also a cornerstone of how you build flywheel for a tops-down enterprise sales. 
-
+And this applies irrespective of whether you are selling a product or a service.
 #### What does making your Champion successful mean?: 
 1. **Understand What Success is for your Champion:** Make sure to ask and understand what success means for your Champion. In most cases its something like a promotion. but no one would openly say so. For a lot of people its building their brand internally in the org ex: " John is the one who transformed production operations" or "Jane lead successful AI adoption for Customer Success" or "Joe built the security stack and the team". 
 2. **De-Risk engaging with you:** If you are an early stage startup, chances are that you are trying to find "Early Adopter" (ref: Crossing the Chasm) within the Org. For Early Adopters typically the goal is to be known as Early Adopter. In Large Enterprises, adopting new tech is often a huge challenge and is riddled with Risks(Career risks - think the old adage "No one got fired for buying IBM").  and any leader who can navigate that has huge career upsides. Your job is to make sure that their downside is protected. If your project fails, make sure it is framed to appear as vendor's fault. Spare the champion at all costs.
