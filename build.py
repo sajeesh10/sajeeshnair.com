@@ -12,6 +12,9 @@ OUT = ROOT / "public"
 SITE = "https://sajeeshnair.com"
 NAME = "Sajeesh Nair"
 DESC = "Writing by Sajeesh Nair on performance engineering and leadership."
+INTRO = ("I rarely published my thoughts in the past. Perfect was always the enemy of good. "
+         "I was worried my writing would come across as slop. However, in the world of AI slop, "
+         "I would like to think that human slop now has a new meaning.")
 NOW = "Rebuilding this site from scratch and getting back to writing."
 CUR = ' aria-current="page"'
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
@@ -147,7 +150,10 @@ def build():
         (d / "index.html").write_text(page(p["title"], body, desc=p["desc"], path=f"/posts/{p['slug']}/", current="writing"), encoding="utf-8")
 
     more = f'<p class="more"><a href="/archive/">Earlier technical writing &rarr;</a> <span>{len(archived)} posts, 2014&ndash;2018</span></p>'
-    home = f"""<div class="now"><b>Now</b><span>{NOW}</span></div>
+    banner = (ROOT / "content/banner.svg").read_text(encoding="utf-8").strip()
+    home = f"""<figure class="banner">{banner}</figure>
+<p class="intro">{INTRO}</p>
+<div class="now"><b>Now</b><span>{NOW}</span></div>
 {index_list(main)}
 {more}"""
     (OUT / "index.html").write_text(page(NAME, home, desc=DESC, current="writing"), encoding="utf-8")
