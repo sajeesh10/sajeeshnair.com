@@ -159,7 +159,8 @@ def flame_html():
         fr.append(f'<span class="f {cls}{" fade" if op else ""}" style="{st}">{label}</span>')
     def lay(n,x0,x1,d,side):
         if d==1: side=n["name"]
-        if n["hot"]: cls="fg-hot"
+        if d==0: cls="fg-root"
+        elif n["hot"]: cls="fg-hot"
         elif side=="teams": cls="fg-r%d"%random.randint(1,3)
         elif side=="systems": cls="fg-g%d"%random.randint(1,3)
         else: cls="fg-g3"
