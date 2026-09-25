@@ -130,3 +130,6 @@ blockquote p:last-child{margin:0}
 .more{margin:22px 0 0;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font:400 .82rem/1.6 var(--mono);color:var(--muted)}
 .more a{color:var(--ink)}
 .more a:hover{color:var(--red)}
+.about .links{font:400 .85rem/1.6 var(--mono);color:var(--muted);margin-top:18px}
+.about .links a{color:var(--red)}
+.about .links a:hover{text-decoration:underline;text-underline-offset:3px}
