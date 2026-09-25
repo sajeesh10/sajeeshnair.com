@@ -136,7 +136,7 @@ def build():
         back, back_label = ("/archive/", "earlier technical writing") if p.get("archive") else ("/", "all writing")
         body = f"""<a class="back" href="{back}">&larr; {back_label}</a>
 <div class="post-head">
-<span class="kicker">{html.escape(p["topic"])}</span>
+<span class="kicker">{" &middot; ".join(html.escape(t.strip()) for t in p["topic"].split(",") if t.strip())}</span>
 <h1>{html.escape(p["title"])}</h1>
 <div class="meta"><time datetime="{p["date"].isoformat()}">{fmt(p["date"])}</time><span>{p["words"]:,} words</span><span>{p["mins"]} min read</span></div>
 </div>
