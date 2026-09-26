@@ -2,6 +2,24 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>Sajeesh Nair</title><link>https://sajeeshnair.com/</link><description>Writing by Sajeesh Nair on performance engineering and leadership.</description><language>en-us</language>
 <atom:link href="https://sajeeshnair.com/index.xml" rel="self" type="application/rss+xml"/>
+<item><title>Your UI is not what you think it is</title><link>https://sajeeshnair.com/posts/your-ui/</link><guid>https://sajeeshnair.com/posts/your-ui/</guid>
+<pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One thing I learnt building at Runwhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our products UI. And a mental model shift is required.
+We need to think about UI as all interfaces through which the product/platform can be operated. &lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;Increase your products user surface area:&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;For  enterprise applications, it is very important that you &lt;strong&gt;don&#x27;t&lt;/strong&gt; try think of users always starting a journey on your application&#x27;s UI. Every org already has its own tool stack. Users are used to certain workflows of using those tool chain. asking them to login to another platform is often a huge friction. &lt;/p&gt;
+&lt;p&gt;Hence, we have to think in terms of - how can we many sure we show up in every tool that they use today? 
+Incase of Runwhen this was making sure we can be used from Collab apps like Slack/Teams, Coding tools like Claude Code/Cursor, ticketing platforms like servicenow/jira. &lt;/p&gt;
+&lt;p&gt;This means that all your entry points into your app are through another application. While this seems obvious, it is a fundamental shift in how you think about user journey and how you see your platform fitting into their workflows of the day. &lt;/p&gt;
+&lt;p&gt;This also means that you have to focus a lot on your &quot;ui&quot; as it appears on these tools. example how does the journey feel on Slack, where does your product show up in service now , how does claude code work with your platform and so on. &lt;/p&gt;
+&lt;h4&gt;2nd order:&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Invest more in ecosystem UI:&lt;/strong&gt; This also means that you probably need to focus very less on your own UI. which may be used very little. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Being Comfortable with lack of control:&lt;/strong&gt; an inevitable factor that I kept running into, is that we are at the mercy of limited affordances provided by the platform we are using as interface. For ex. if you are building on slack, you have to conform to the constructs that slack provides. I found building agentic chat flows on MS Teams to be very restrictive and no matter what you did the UX was clunky. this may limit the number of features you could support, and would have to be get creative on how to solve.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Average UX on existing surface &amp;gt;&amp;gt; perfect UX on your UI:&lt;/strong&gt; cont. from #2. what i learn is that, even an average UX on users existing tool chain is much better for them as compared to switching to a product to find a great UX. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;My Product != My UI:&lt;/strong&gt; its possible that a very small percentage of your demo shows anything on your own UI. And its ok.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Virality&lt;/strong&gt;: your product showing up on other UI, for example a slack channel is huge lever to quickly get a lot of active users for your product. leverage this well. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Jump off Points:&lt;/strong&gt; design the jump off points from the external interface to your products UI very consciously. this is the single biggest point in user journey where users are likely to &quot;drop-off&quot; from your product.&lt;/li&gt;
+&lt;/ol&gt;</description></item>
 <item><title>Making sure your Champion Succeeds</title><link>https://sajeeshnair.com/posts/champion/</link><guid>https://sajeeshnair.com/posts/champion/</guid>
 <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One of the things that I learnt doing sales and pre sales in large enterprise and found to be highly powerful is to..
 Make sure that Your Champion Succeeds. Even if your product does not. &lt;/p&gt;

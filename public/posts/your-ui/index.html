@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your UI is not what you think it is · Sajeesh Nair</title>
+<meta name="description" content="One thing I learnt building at Runwhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our products UI. And a mental model…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/your-ui/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="Your UI is not what you think it is">
+<meta property="og:description" content="One thing I learnt building at Runwhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our products UI. And a mental model…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/your-ui/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">0 to 1</span>
+<h1>Your UI is not what you think it is</h1>
+<div class="meta"><time datetime="2026-09-26">26 Sep 2026</time><span>509 words</span><span>3 min read</span></div>
+</div>
+<article class="post">
+<p>One thing I learnt building at Runwhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our products UI. And a mental model shift is required.
+We need to think about UI as all interfaces through which the product/platform can be operated. </p>
+<h4><strong>Increase your products user surface area:</strong></h4>
+<p>For  enterprise applications, it is very important that you <strong>don't</strong> try think of users always starting a journey on your application's UI. Every org already has its own tool stack. Users are used to certain workflows of using those tool chain. asking them to login to another platform is often a huge friction. </p>
+<p>Hence, we have to think in terms of - how can we many sure we show up in every tool that they use today? 
+Incase of Runwhen this was making sure we can be used from Collab apps like Slack/Teams, Coding tools like Claude Code/Cursor, ticketing platforms like servicenow/jira. </p>
+<p>This means that all your entry points into your app are through another application. While this seems obvious, it is a fundamental shift in how you think about user journey and how you see your platform fitting into their workflows of the day. </p>
+<p>This also means that you have to focus a lot on your "ui" as it appears on these tools. example how does the journey feel on Slack, where does your product show up in service now , how does claude code work with your platform and so on. </p>
+<h4>2nd order:</h4>
+<ol>
+<li><strong>Invest more in ecosystem UI:</strong> This also means that you probably need to focus very less on your own UI. which may be used very little. </li>
+<li><strong>Being Comfortable with lack of control:</strong> an inevitable factor that I kept running into, is that we are at the mercy of limited affordances provided by the platform we are using as interface. For ex. if you are building on slack, you have to conform to the constructs that slack provides. I found building agentic chat flows on MS Teams to be very restrictive and no matter what you did the UX was clunky. this may limit the number of features you could support, and would have to be get creative on how to solve.</li>
+<li><strong>Average UX on existing surface &gt;&gt; perfect UX on your UI:</strong> cont. from #2. what i learn is that, even an average UX on users existing tool chain is much better for them as compared to switching to a product to find a great UX. </li>
+<li><strong>My Product != My UI:</strong> its possible that a very small percentage of your demo shows anything on your own UI. And its ok.</li>
+<li><strong>Virality</strong>: your product showing up on other UI, for example a slack channel is huge lever to quickly get a lot of active users for your product. leverage this well. </li>
+<li><strong>Jump off Points:</strong> design the jump off points from the external interface to your products UI very consciously. this is the single biggest point in user journey where users are likely to "drop-off" from your product.</li>
+</ol>
+</article>
+<p class="human-note">Written by a human. Expect the odd typo and grammar slip.</p>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/champion/"><small>Older</small><b>Making sure your Champion Succeeds</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+<script data-goatcounter="https://sajeesh.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+(function () {
+  var a = document.querySelector("article.post"), left = [25, 50, 75, 100], queue = [];
+  if (!a) return;
+  function flush() {
+    if (!(window.goatcounter && window.goatcounter.count)) return setTimeout(flush, 1000);
+    while (queue.length) {
+      var p = queue.shift();
+      window.goatcounter.count({path: "scroll-" + p + "/your-ui", title: "Scrolled " + p + "%", event: true});
+    }
+  }
+  function check() {
+    var r = a.getBoundingClientRect(), seen = (innerHeight - r.top) / r.height * 100, sent = false;
+    while (left.length && seen >= left[0]) { queue.push(left.shift()); sent = true; }
+    if (sent) flush();
+    if (!left.length) removeEventListener("scroll", onScroll);
+  }
+  var t;
+  function onScroll() { clearTimeout(t); t = setTimeout(check, 200); }
+  addEventListener("scroll", onScroll, {passive: true});
+  addEventListener("load", check);
+})();
+</script>
+</body>
+</html>
