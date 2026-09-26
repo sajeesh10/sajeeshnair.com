@@ -2,44 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>Sajeesh Nair</title><link>https://sajeeshnair.com/</link><description>Writing by Sajeesh Nair on performance engineering and leadership.</description><language>en-us</language>
 <atom:link href="https://sajeeshnair.com/index.xml" rel="self" type="application/rss+xml"/>
-<item><title>You are Eleven Not Elon</title><link>https://sajeeshnair.com/posts/eleven-not-elon/</link><guid>https://sajeeshnair.com/posts/eleven-not-elon/</guid>
-<pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;This post is about Micromanagement.&lt;/p&gt;
-&lt;p&gt;Micromanagement is always a polarising topic. There are people who fanatically advocate it. And there are people who think its immature way to manage orgs and projects. &lt;/p&gt;
-&lt;h4&gt;My Biased Observations:&lt;/h4&gt;
-&lt;p&gt;Here are my observations having managed several teams and managers and few hundred people over the years. &lt;/p&gt;
-&lt;p&gt;People often associate an identity with Micromanagement. &quot;How&#x27;s the new manager? - Oh, she is a big micromanager!&quot;.&lt;/p&gt;
-&lt;p&gt;Depending on who you talk to.. they may see this as a good thing or bad. 
-Typically the people reporting to a manager would think Micromanagement is evil and a pain in the ass. 
-However , if you have a micromanager reporting into you - you are likely to say &quot; Oh! She is always in the details.&quot;. 
-My heuristic is that people feel better when Managers they are managing are micromanagers. They somehow feel the comfort that they won&#x27;t miss any details. &lt;/p&gt;
-&lt;h4&gt;My mental model of Micromanagement:&lt;/h4&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Micromanagement is a tool. &lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;As a leader over a period of years we gather several tools in our toolkit. These range from situational awareness to handling conflicts to feedback mechanisms and so on. Micromanagement is just another tool in the toolkit.&lt;br /&gt;
-I like to keep a dispassionate view towards. My like or dislike of the tool should matter less than, whether or not that tool needs to be used. &lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;and its a HEAVY tool.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h4&gt;How to Micromanage effectively:&lt;/h4&gt;
-&lt;p&gt;As with any tool, its important to learn how to use it well. Here are few things that i learnt through making mistakes: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Its a heavy tool, use it wisely:&lt;/strong&gt; This is where i try to give a bad pop-culture analogy. 
-If you are thinking Thor&#x27;s Hammer, you are wrong. I would suggest think of it as Eleven using her powers in Stranger Things. Its extremely effective, but it also drains her. 
-That is exactly how micromanagement works. It is very powerful and when you use it you can be sure that there are concrete outcomes. However, you can only do it for so long. So be very conscious what you chose to micromanage. &lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Be aware it drains the team too:&lt;/strong&gt; when a team/project is being micromanaged, it is important to acknowledge that in most cases its draining for the team too. There is only so much micromanagement that people can take. Be empathetic to the fact that team is enduring this and its not BAU. &lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;Agency Drain:&lt;/strong&gt; Another thing to be conscious of is that when the leader is making all micro decisions on day to day basis, many of the senior members in the team could start to lose their agency. You don&#x27;t want your best performers to lose their agency. I find this to be the most difficult balance to strike. The best way I have found to deal with this is to acknowledge that you realise this is not pleasant for them and is something that we have to accept because the org needs it. Being heard goes a long way.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;You have an attention budget&lt;/strong&gt;: Micromanagement inherently means that you bring sharp focus to a project. However, it also means that you de-focus yourself from other projects, atleast some of them. This is also why its important to weigh whether it is worth your attention micromanaging a given project. (if you are reading this, you are likely not an Elon Musk).&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;I am very curious to learn how people traverse the spectrum of handsoff&amp;lt;&amp;gt;micro management. I keep updating my mental model as I meet new people.&lt;/p&gt;</description></item>
 <item><title>Making sure your Champion Succeeds</title><link>https://sajeeshnair.com/posts/champion/</link><guid>https://sajeeshnair.com/posts/champion/</guid>
 <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One of the things that I learnt doing sales and pre sales in large enterprise and found to be highly powerful is to..
 Make sure that Your Champion Succeeds. Even if your product does not. &lt;/p&gt;
@@ -61,6 +23,45 @@ And this applies irrespective of whether you are selling a product or a service.
 &lt;li&gt;they are likely to refer/intro you to their peers in the industry. better networks , better sales pipeline. &lt;/li&gt;
 &lt;li&gt;you build a strong rolodex which becomes your backbone of top-down sales in B2B. &lt;/li&gt;
 &lt;/ul&gt;</description></item>
+<item><title>You are Eleven Not Elon</title><link>https://sajeeshnair.com/posts/eleven-not-elon/</link><guid>https://sajeeshnair.com/posts/eleven-not-elon/</guid>
+<pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;This post is about Micromanagement.&lt;/p&gt;
+&lt;p&gt;Micromanagement is always a polarising topic. There are people who fanatically advocate it. And there are people who think it&#x27;s immature way to manage orgs and projects. &lt;/p&gt;
+&lt;h4&gt;My Biased Observations:&lt;/h4&gt;
+&lt;p&gt;Here are my observations having managed several teams and managers and few hundred people over the years. &lt;/p&gt;
+&lt;p&gt;People often associate an identity with Micromanagement. &quot;How&#x27;s the new manager? - Oh, she is a big micromanager!&quot;.&lt;/p&gt;
+&lt;p&gt;Depending on who you talk to.. they may see this as a good thing or bad. 
+Typically the people reporting to a manager would think Micromanagement is evil and a pain in the ass. 
+However , if you have a micromanager reporting into you - you are likely to say &quot; Oh! She is always in the details.&quot;. 
+My heuristic is that people feel better when Managers they are managing are micromanagers. They somehow feel the comfort that they won&#x27;t miss any details. &lt;/p&gt;
+&lt;h4&gt;My mental model of Micromanagement:&lt;/h4&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Micromanagement is a tool. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;As a leader over a period of years we gather several tools in our toolkit. These range from situational awareness to handling conflicts to feedback mechanisms and so on. Micromanagement is just another tool in the toolkit.&lt;br /&gt;
+I like to keep a dispassionate view towards it. My like or dislike of the tool should matter less than, whether or not that tool needs to be used. &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;and it&#x27;s a HEAVY tool.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4&gt;How to Micromanage effectively:&lt;/h4&gt;
+&lt;p&gt;As with any tool, it&#x27;s important to learn how to use it well. Here are few things that I learnt through making mistakes: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;It&#x27;s a heavy tool, use it wisely:&lt;/strong&gt; This is where I try to give a bad pop-culture analogy. 
+If you are thinking Thor&#x27;s Hammer, you are wrong. I would suggest think of it as Eleven using her powers in Stranger Things. It&#x27;s extremely effective, but it also drains her. 
+That is exactly how micromanagement works. It is very powerful and when you use it you can be sure that there are concrete outcomes. However, you can only do it for so long. So be very conscious what you choose to micromanage. &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Be aware it drains the team too:&lt;/strong&gt; when a team/project is being micromanaged, it is important to acknowledge that in most cases it&#x27;s draining for the team too. There is only so much micromanagement that people can take. Be empathetic to the fact that team is enduring this and it&#x27;s not BAU. &lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Agency Drain:&lt;/strong&gt; Another thing to be conscious of is that when the leader is making all micro decisions on day to day basis, many of the senior members in the team could start to lose their agency. You don&#x27;t want your best performers to lose their agency. I find this to be the most difficult balance to strike. The best way I have found to deal with this is to acknowledge that you realise this is not pleasant for them and is something that we have to accept because the org needs it. Being heard goes a long way.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;You have an attention budget&lt;/strong&gt;: Micromanagement inherently means that you bring sharp focus to a project. However, it also means that you de-focus yourself from other projects, at least some of them. This is also why it&#x27;s important to weigh whether it is worth your attention micromanaging a given project. (if you are reading this, you are likely not an Elon Musk).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Most of us are closer to Eleven. Very few can operate like Elon. &lt;/p&gt;
+&lt;p&gt;I am very curious to learn how people traverse the spectrum of hands-off &amp;lt;&amp;gt; micromanagement. I keep updating my mental model as I meet new people. &lt;/p&gt;</description></item>
 <item><title>Your UI is not what you think it is</title><link>https://sajeeshnair.com/posts/your-ui/</link><guid>https://sajeeshnair.com/posts/your-ui/</guid>
 <pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One thing I learnt building at RunWhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our product&#x27;s UI. And a mental model shift is required.
 We need to think about UI as all interfaces through which the product/platform can be operated. &lt;/p&gt;
