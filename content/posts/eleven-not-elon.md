@@ -1,5 +1,5 @@
 ---
-title: You are Eleven Not Elon
+title: You are Eleven, Not Elon
 date: 2026-09-18
 topic: Leadership
 ---
