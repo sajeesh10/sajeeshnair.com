@@ -2,24 +2,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>Sajeesh Nair</title><link>https://sajeeshnair.com/</link><description>Writing by Sajeesh Nair on performance engineering and leadership.</description><language>en-us</language>
 <atom:link href="https://sajeeshnair.com/index.xml" rel="self" type="application/rss+xml"/>
-<item><title>Your UI is not what you think it is</title><link>https://sajeeshnair.com/posts/your-ui/</link><guid>https://sajeeshnair.com/posts/your-ui/</guid>
-<pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One thing I learnt building at Runwhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our products UI. And a mental model shift is required.
-We need to think about UI as all interfaces through which the product/platform can be operated. &lt;/p&gt;
-&lt;h4&gt;&lt;strong&gt;Increase your products user surface area:&lt;/strong&gt;&lt;/h4&gt;
-&lt;p&gt;For  enterprise applications, it is very important that you &lt;strong&gt;don&#x27;t&lt;/strong&gt; try think of users always starting a journey on your application&#x27;s UI. Every org already has its own tool stack. Users are used to certain workflows of using those tool chain. asking them to login to another platform is often a huge friction. &lt;/p&gt;
-&lt;p&gt;Hence, we have to think in terms of - how can we many sure we show up in every tool that they use today? 
-Incase of Runwhen this was making sure we can be used from Collab apps like Slack/Teams, Coding tools like Claude Code/Cursor, ticketing platforms like servicenow/jira. &lt;/p&gt;
-&lt;p&gt;This means that all your entry points into your app are through another application. While this seems obvious, it is a fundamental shift in how you think about user journey and how you see your platform fitting into their workflows of the day. &lt;/p&gt;
-&lt;p&gt;This also means that you have to focus a lot on your &quot;ui&quot; as it appears on these tools. example how does the journey feel on Slack, where does your product show up in service now , how does claude code work with your platform and so on. &lt;/p&gt;
-&lt;h4&gt;2nd order:&lt;/h4&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;Invest more in ecosystem UI:&lt;/strong&gt; This also means that you probably need to focus very less on your own UI. which may be used very little. &lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Being Comfortable with lack of control:&lt;/strong&gt; an inevitable factor that I kept running into, is that we are at the mercy of limited affordances provided by the platform we are using as interface. For ex. if you are building on slack, you have to conform to the constructs that slack provides. I found building agentic chat flows on MS Teams to be very restrictive and no matter what you did the UX was clunky. this may limit the number of features you could support, and would have to be get creative on how to solve.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Average UX on existing surface &amp;gt;&amp;gt; perfect UX on your UI:&lt;/strong&gt; cont. from #2. what i learn is that, even an average UX on users existing tool chain is much better for them as compared to switching to a product to find a great UX. &lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;My Product != My UI:&lt;/strong&gt; its possible that a very small percentage of your demo shows anything on your own UI. And its ok.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Virality&lt;/strong&gt;: your product showing up on other UI, for example a slack channel is huge lever to quickly get a lot of active users for your product. leverage this well. &lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Jump off Points:&lt;/strong&gt; design the jump off points from the external interface to your products UI very consciously. this is the single biggest point in user journey where users are likely to &quot;drop-off&quot; from your product.&lt;/li&gt;
-&lt;/ol&gt;</description></item>
 <item><title>Making sure your Champion Succeeds</title><link>https://sajeeshnair.com/posts/champion/</link><guid>https://sajeeshnair.com/posts/champion/</guid>
 <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One of the things that I learnt doing sales and pre sales in large enterprise and found to be highly powerful is to..
 Make sure that Your Champion Succeeds. Even if your product does not. &lt;/p&gt;
@@ -41,6 +23,24 @@ And this applies irrespective of whether you are selling a product or a service.
 &lt;li&gt;they are likely to refer/intro you to their peers in the industry. better networks , better sales pipeline. &lt;/li&gt;
 &lt;li&gt;you build a strong rolodex which becomes your backbone of top-down sales in B2B. &lt;/li&gt;
 &lt;/ul&gt;</description></item>
+<item><title>Your UI is not what you think it is</title><link>https://sajeeshnair.com/posts/your-ui/</link><guid>https://sajeeshnair.com/posts/your-ui/</guid>
+<pubDate>Mon, 07 Sep 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;One thing I learnt building at RunWhen and Druva is the fact that in case of Enterprise products we tend to overestimate the importance of our product&#x27;s UI. And a mental model shift is required.
+We need to think about UI as all interfaces through which the product/platform can be operated. &lt;/p&gt;
+&lt;h4&gt;&lt;strong&gt;Increase your product&#x27;s user surface area:&lt;/strong&gt;&lt;/h4&gt;
+&lt;p&gt;For  enterprise applications, it is very important that you &lt;strong&gt;don&#x27;t&lt;/strong&gt; try to think of users always starting a journey on your application&#x27;s UI. Every org already has its own tool stack. Users are used to certain workflows of using those tool chain. Asking them to login to another platform is often a huge friction. &lt;/p&gt;
+&lt;p&gt;Hence, we have to think in terms of - how can we make sure we show up in every tool that they use today? 
+In case of RunWhen this was making sure we can be used from Collab apps like Slack/Teams, Coding tools like Claude Code/Cursor, ticketing platforms like ServiceNow/Jira. &lt;/p&gt;
+&lt;p&gt;This means that all your entry points into your app are through another application. While this seems obvious, it is a fundamental shift in how you think about user journey and how you see your platform fitting into their workflows of the day. &lt;/p&gt;
+&lt;p&gt;This also means that you have to focus a lot on your &quot;ui&quot; as it appears on these tools. Example: how does the journey feel on Slack, where does your product show up in ServiceNow, how does Claude Code work with your platform and so on. &lt;/p&gt;
+&lt;h4&gt;Second-order effects:&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Invest more in ecosystem UI:&lt;/strong&gt; This also means that you probably need to focus very less on your own UI, which may be used very little. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Being Comfortable with lack of control:&lt;/strong&gt; An inevitable factor that I kept running into, is that we are at the mercy of limited affordances provided by the platform we are using as interface. For ex. if you are building on Slack, you have to conform to the constructs that Slack provides. I found building agentic chat flows on MS Teams to be very restrictive and no matter what you did the UX was clunky. This may limit the number of features you could support, and you would have to get creative on how to solve.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Average UX on existing surface &amp;gt;&amp;gt; perfect UX on your UI:&lt;/strong&gt; Cont. from #2. What I learn is that, even an average UX on users existing tool chain is much better for them as compared to switching to a product to find a great UX. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;My Product != My UI:&lt;/strong&gt; It&#x27;s possible that a very small percentage of your demo shows anything on your own UI. And it&#x27;s ok.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Virality&lt;/strong&gt;: Your product showing up on other UI, for example a Slack channel is huge lever to quickly get a lot of active users for your product. Leverage this well. &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Jump off Points:&lt;/strong&gt; Design the jump off points from the external interface to your product&#x27;s UI very consciously. This is the single biggest point in user journey where users are likely to &quot;drop-off&quot; from your product.&lt;/li&gt;
+&lt;/ol&gt;</description></item>
 <item><title>Beyond the Books: Why Engineering Managers Must Embrace Their Learning Style for Growth</title><link>https://sajeeshnair.com/posts/learningstyle/</link><guid>https://sajeeshnair.com/posts/learningstyle/</guid>
 <pubDate>Tue, 01 Aug 2023 00:00:00 +0000</pubDate><description>&lt;p&gt;&lt;img loading=&quot;lazy&quot; alt=&quot;&quot; src=&quot;https://www.weareteachers.com/wp-content/uploads/2015/04/bad-student.tmb-570.png&quot; /&gt;&lt;/p&gt;
 &lt;p&gt;The best way for you to learn might not be by just reading.&lt;/p&gt;
