@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Engineering Management in 2026 · Sajeesh Nair</title>
+<meta name="description" content="A common theme that I keep hearing from Engineering Mangers, Directors, VPs is : Managing a team of 8, is now more like managing a team of 30 pre-AI. At Runwhen, there was a point…">
+<link rel="canonical" href="https://sajeeshnair.com/posts/engineering-management-2026/">
+<link rel="alternate" type="application/rss+xml" title="Sajeesh Nair" href="/index.xml">
+<meta property="og:title" content="Engineering Management in 2026">
+<meta property="og:description" content="A common theme that I keep hearing from Engineering Mangers, Directors, VPs is : Managing a team of 8, is now more like managing a team of 30 pre-AI. At Runwhen, there was a point…">
+<meta property="og:url" content="https://sajeeshnair.com/posts/engineering-management-2026/">
+<meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+<main class="wrap" id="content">
+<header class="site"><a class="logo" href="/">sajeeshnair<i>.</i>com</a><nav><a href="/" aria-current="page">writing</a><a href="/about/">about</a><a href="/index.xml">rss</a></nav></header>
+<a class="back" href="/">&larr; all writing</a>
+<div class="post-head">
+<span class="kicker">Leadership &middot; 0 to 1</span>
+<h1>Engineering Management in 2026</h1>
+<div class="meta"><time datetime="2026-10-06">6 Oct 2026</time><span>645 words</span><span>3 min read</span></div>
+</div>
+<article class="post">
+<p>A common theme that I keep hearing from Engineering Mangers, Directors, VPs is : <strong>Managing a team of 8, is now more like managing a team of 30 pre-AI.</strong> </p>
+<p>At Runwhen, there was a point in time when we were 8 engineers, all of them had adopted AI coding well and were churning out e2e features. We were still figuring out code reviews fully, but had decent level of review skills which enabled the senior engineers to manage reviews through claude code.</p>
+<p>The team looked very well to build features rapidly. However, a new bottle neck emerged. <strong>ME</strong>. </p>
+<p>The sheer number of product and engg. decisions that I had to make on a day to day basis had gone up a lot. Team was often waiting on me. 
+From my perspective, I found myself having to go deep into several product and design areas every day to ensure that I have full context and then to make the decision. Every deep dive was cognitively  heavy. And multiple threads a day meant context switching several times a day on major decisions. This also meant that I had very less time to internalise the ideas and letting them simmer for a bit before making a decision. I was dropping packets all over the place.
+This was also the time when people started showing up with "cool" features and prototypes based on their conversations with customers. 
+That is when the reality of "building is cheap" really hit me. </p>
+<p>Here are few things that I learned the hard way: </p>
+<ol>
+<li><strong>Document driven decisions</strong>: we were already very documentation heavy, and hence any product or design discussion happened on a document that an owner would create. This helped a lot because this now meant that I could read the docs and comment, others (in diff. time-zones) can see the doc and what others commented and can add thoughts. This helped in few different ways: <ol>
+<li>reduced a lot of  open ended "brainstorming" style discussions with different people. </li>
+<li>we now have an artifact that could be fed to agent for context</li>
+<li>Rationale for decisions were recorded, it mostly showed up in the form of comment-exchanges between team members. </li>
+</ol>
+</li>
+<li><strong>Rethink Sprint</strong>:  We soon realised that Quarterly Plans held very less practical value. So we set some directional guidance and started doing a monthly business plan at the start of every month.  This was coupled with small pod-level-sprints ranging from 1-5 days. Pods were simply aligned by deliverable projects. Most pods were 2 people, some 1, some 3. Never more than 3. </li>
+<li><strong>Default to NO on unplanned PRs:</strong> Engineers would often let Claude code rip over the weekend and turn up with "cool " features on Monday morning. And I suddenly found myself reviewing and gating these features. It also meant senior enggs now had to code review it. All usually unplanned. Turning up with PRs is now a very low bar. Expect them to be thrown away.  </li>
+<li><strong>Build UX/UI Guidelines:</strong> For <a href="/posts/your-ui/">all interfaces that face user</a>, have clear templated UX rules, embedded as claude skills. This is something that we got to very late. We didn't want to have full time frontend-dev and hence lot my time went in UI nit-pick reviews. All it took was 2 weeks of dev and the product started to show serious signs of <em>frankeinstien-ish</em> UI. </li>
+<li><strong>Give yourself a break</strong>: Last but not the least. It took me sometime to realise and even longer to internalise, that I was not the bottleneck. I was the last gate of judgement stopping AI Slop from reaching customers. It was okay to be slow and diligent on this. </li>
+</ol>
+<p>As I talk to more leaders, I am eagerly looking to learn from their experiences. No System is perfect and needs evolving. These are just few things that I tried and worked to some extent and I keep tinkering.</p>
+</article>
+<p class="human-note">Written by a human. Expect the odd typo and grammar slip.</p>
+<nav class="pn" aria-label="More posts"><a class="older" href="/posts/champion/"><small>Older</small><b>Making sure your Champion Succeeds</b></a></nav>
+<footer><span>&copy; 2026 Sajeesh Nair</span><nav><a href="/index.xml">rss</a><a href="https://www.linkedin.com/in/sajeesh-nair/">linkedin</a></nav></footer>
+</main>
+<script data-goatcounter="https://sajeesh.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<script>
+(function () {
+  var a = document.querySelector("article.post"), left = [25, 50, 75, 100], queue = [];
+  if (!a) return;
+  function flush() {
+    if (!(window.goatcounter && window.goatcounter.count)) return setTimeout(flush, 1000);
+    while (queue.length) {
+      var p = queue.shift();
+      window.goatcounter.count({path: "scroll-" + p + "/engineering-management-2026", title: "Scrolled " + p + "%", event: true});
+    }
+  }
+  function check() {
+    var r = a.getBoundingClientRect(), seen = (innerHeight - r.top) / r.height * 100, sent = false;
+    while (left.length && seen >= left[0]) { queue.push(left.shift()); sent = true; }
+    if (sent) flush();
+    if (!left.length) removeEventListener("scroll", onScroll);
+  }
+  var t;
+  function onScroll() { clearTimeout(t); t = setTimeout(check, 200); }
+  addEventListener("scroll", onScroll, {passive: true});
+  addEventListener("load", check);
+})();
+</script>
+</body>
+</html>
