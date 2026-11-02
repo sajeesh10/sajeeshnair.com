@@ -1,5 +1,5 @@
 ---
-title: Engineering Management in 2026
+title: Dear Engineering Manager: Breathe
 date: 2026-10-06
 topic: Leadership, 0 to 1
 ---
