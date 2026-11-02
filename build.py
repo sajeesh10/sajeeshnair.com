@@ -169,11 +169,11 @@ def build():
 <span class="kicker">{" &middot; ".join(html.escape(t.strip()) for t in p["topic"].split(",") if t.strip())}</span>
 <h1>{html.escape(p["title"])}</h1>
 <div class="meta"><time datetime="{p["date"].isoformat()}">{fmt(p["date"])}</time><span>{p["words"]:,} words</span><span>{p["mins"]} min read</span></div>
+<p class="human-note">{HUMAN_NOTE}</p>
 </div>
 {box}<article class="post{wide}">
 {p["html"]}
 </article>
-<p class="human-note">{HUMAN_NOTE}</p>
 <nav class="pn" aria-label="More posts">{pn}</nav>"""
         d = OUT / "posts" / p["slug"]
         d.mkdir(parents=True, exist_ok=True)

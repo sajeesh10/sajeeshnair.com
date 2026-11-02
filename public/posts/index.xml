@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <title>Sajeesh Nair</title><link>https://sajeeshnair.com/</link><description>Writing by Sajeesh Nair on performance engineering and leadership.</description><language>en-us</language>
 <atom:link href="https://sajeeshnair.com/index.xml" rel="self" type="application/rss+xml"/>
-<item><title>Engineering Management in 2026</title><link>https://sajeeshnair.com/posts/engineering-management-2026/</link><guid>https://sajeeshnair.com/posts/engineering-management-2026/</guid>
+<item><title>Dear Engineering Manager: Breathe</title><link>https://sajeeshnair.com/posts/engineering-management-2026/</link><guid>https://sajeeshnair.com/posts/engineering-management-2026/</guid>
 <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate><description>&lt;p&gt;A common theme that I keep hearing from Engineering Managers, Directors, VPs is : &lt;strong&gt;Managing a team of 8, is now more like managing a team of 30 pre-AI.&lt;/strong&gt; &lt;/p&gt;
 &lt;p&gt;At RunWhen, there was a point in time when we were 8 engineers, all of them had adopted AI coding well and were churning out e2e features. We were still figuring out code reviews fully, but had decent level of review skills which enabled the senior engineers to manage reviews through claude code.&lt;/p&gt;
 &lt;p&gt;The team looked very well to build features rapidly. However, a new bottleneck emerged. &lt;strong&gt;ME&lt;/strong&gt;. &lt;/p&gt;
