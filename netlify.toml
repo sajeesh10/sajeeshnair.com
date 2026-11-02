@@ -17,3 +17,9 @@
   from = "/posts/page/*"
   to = "/posts/"
   status = 301
+
+# unlisted page: reachable by URL, kept out of search engines
+[[headers]]
+  for = "/e2t/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

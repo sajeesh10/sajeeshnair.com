@@ -1,0 +1,729 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Electrons to Tokens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#16201B; --muted:#56635C; --line:#D5DDD7;
+  --pcb:#1C6B47; --pcb-soft:#E1EFE7; --gold:#A67C1A; --gold-soft:#F6EDD4; --warn:#B3261E; --warn-soft:#FBE7E5;
+  --display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0F1512; --surface:#16201B; --ink:#E6EDE8; --muted:#9AA9A0; --line:#2A3831;
+    --pcb:#5CC593; --pcb-soft:#173327; --gold:#E0B64E; --gold-soft:#342A12; --warn:#F28B82; --warn-soft:#3A1C1A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0F1512; --surface:#16201B; --ink:#E6EDE8; --muted:#9AA9A0; --line:#2A3831;
+  --pcb:#5CC593; --pcb-soft:#173327; --gold:#E0B64E; --gold-soft:#342A12; --warn:#F28B82; --warn-soft:#3A1C1A;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--body);padding-inline:16px;padding-block:32px 64px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);font-stretch:80%;text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(36px,7vw,60px);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(24px,4vw,32px);font-weight:700}
+h3{font-size:18px;font-weight:700;font-stretch:90%}
+p{margin:0;max-width:68ch}
+.eyebrow{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pcb)}
+.lede{font-size:18px;color:var(--muted);max-width:62ch}
+header{display:flex;flex-direction:column;gap:14px}
+section{display:flex;flex-direction:column;gap:18px}
+.sub{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.9em}
+.term{font-weight:600;color:var(--pcb)}
+
+/* the stack */
+.stack{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)}
+.layer{display:grid;grid-template-columns:44px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,1fr);gap:16px;padding:16px 18px;border-top:1px solid var(--line);align-items:start}
+.layer:first-child{border-top:0}
+.layer .n{font:500 13px/1.3 var(--mono);color:var(--muted);padding-top:2px}
+.layer h3{margin-bottom:4px}
+.layer .what{color:var(--muted);font-size:14px}
+.layer .lbl{font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.layer .limit{font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12px/1 var(--mono);padding:5px 7px;border-radius:3px;background:var(--pcb-soft);color:var(--ink);white-space:nowrap}
+.layer.hot{background:linear-gradient(90deg,var(--gold-soft),transparent 60%)}
+.stackcap{display:flex;justify-content:space-between;font:500 12px/1 var(--mono);color:var(--muted);letter-spacing:.06em}
+@media (max-width:760px){
+  .layer{grid-template-columns:32px minmax(0,1fr)}
+  .layer > :nth-child(n+3){grid-column:2}
+}
+
+/* token journey */
+.flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.step .k{font:500 11px/1 var(--mono);color:var(--muted);letter-spacing:.08em}
+.step p{font-size:14px;color:var(--muted)}
+.step .tag{align-self:flex-start;font:500 11px/1 var(--mono);padding:4px 6px;border-radius:3px}
+.tag.c{background:var(--pcb-soft);color:var(--pcb)}
+.tag.m{background:var(--gold-soft);color:var(--gold)}
+@media (max-width:760px){.flow{grid-template-columns:minmax(0,1fr)}}
+.callout{border-left:3px solid var(--gold);padding:10px 16px;background:var(--surface);border-radius:0 6px 6px 0}
+.callout p{max-width:none}
+
+/* supply chain */
+.chain{overflow-x:auto;padding-bottom:6px}
+.chain svg{display:block;min-width:900px;width:100%;height:auto}
+.chain text{font-family:var(--mono)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:2px;display:inline-block}
+
+/* players grid */
+.players{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pl{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.pl p{font-size:14px;color:var(--muted)}
+.pl .moat{font-size:13px}
+.pl .moat b{color:var(--ink);font-weight:600}
+@media (max-width:760px){.players{grid-template-columns:minmax(0,1fr)}}
+
+/* numbers */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:10px 14px;border-top:1px solid var(--line);vertical-align:top}
+thead th{border-top:0;font:500 11px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+td.num{font-family:var(--mono);white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--pcb)}
+.note{font-size:13px;color:var(--muted)}
+
+/* figures */
+.fig{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.fig figcaption{font-size:13px;color:var(--muted);max-width:none}
+.fig .scroll{overflow-x:auto}
+.fig svg{display:block;width:100%;height:auto}
+.fig svg text{font-family:var(--mono)}
+.fig .wide{min-width:680px}
+.charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.charts h3{font-size:15px;margin-bottom:6px}
+@media (max-width:640px){.charts{grid-template-columns:minmax(0,1fr)}}
+.powerbar{display:flex;height:44px;border-radius:4px;overflow:hidden;font:500 12px/1.2 var(--mono)}
+.powerbar div{display:flex;align-items:center;padding-inline:10px;white-space:nowrap;overflow:hidden}
+.pchain{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:500 12px/1.3 var(--mono)}
+.pchain .pn{border:1px solid var(--line);border-radius:4px;padding:8px 10px;background:var(--bg)}
+.pchain .pn.x{border-color:var(--warn);background:var(--warn-soft)}
+.pchain .pn small{display:block;color:var(--muted);font-weight:400}
+.pchain .ar{color:var(--muted)}
+
+/* deep dive */
+.dive{border-top:3px solid var(--ink);padding-top:22px}
+.part{display:flex;flex-direction:column;gap:14px;padding-top:10px}
+.part > h3{font-size:22px;display:flex;gap:10px;align-items:baseline}
+.part > h3 .pn2{font:500 13px/1 var(--mono);color:var(--pcb)}
+.part p{max-width:70ch}
+.gist{font-weight:600}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;align-items:center;font:500 12px/1.2 var(--mono)}
+.bar .track{position:relative;height:26px;background:var(--bg);border-radius:3px}
+.bar .fill{height:100%;border-radius:3px;display:flex;align-items:center;padding-left:8px;color:var(--bg);background:var(--pcb);white-space:nowrap}
+.bar .cap{position:absolute;top:-4px;bottom:-4px;right:0;border-right:2px dashed var(--warn)}
+.tiers{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.tier{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1.4fr);gap:14px;padding:12px 14px;border-top:1px solid var(--line);align-items:center;background:var(--surface)}
+.tier:first-child{border-top:0}
+.tier b{font-family:var(--display);font-stretch:85%;font-size:17px}
+.tier .where{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.tier .sz{font:500 13px/1.3 var(--mono);color:var(--pcb)}
+.tier .an{font-size:13px;color:var(--muted)}
+.tier .meter{height:6px;background:var(--gold);border-radius:3px;margin-top:6px}
+@media (max-width:640px){.tier{grid-template-columns:minmax(0,1fr)}}
+.math{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px 12px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px}
+.math .i{font:500 12px/1 var(--mono);color:var(--muted)}
+.math .eq{font:500 14px/1.4 var(--mono);color:var(--pcb);text-align:right;white-space:nowrap}
+.math .res{grid-column:1/-1;border-top:1px solid var(--line);padding-top:10px;font-weight:600}
+@media (max-width:560px){.math{grid-template-columns:22px minmax(0,1fr)}.math .eq{grid-column:2;text-align:left}}
+.qs{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.q{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;padding:12px 14px;border-top:1px solid var(--line);font-size:14px}
+.q:first-child{border-top:0}
+.st{font:500 11px/1 var(--mono);padding:5px 7px;border-radius:3px;white-space:nowrap;flex-shrink:0}
+.st.done{background:var(--pcb-soft);color:var(--pcb)}
+.st.part2{background:var(--gold-soft);color:var(--gold)}
+.st.open{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+
+/* deeper */
+.deeper{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dp{border-top:2px solid var(--pcb);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.dp p{font-size:14px;color:var(--muted)}
+@media (max-width:640px){.deeper{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">AI hardware stack · a systems map</span>
+  <h1>Electrons to Tokens</h1>
+  <p class="lede">An AI datacenter is a <span class="term">token factory</span>. Power goes in, tokens come out. Every company in this space owns one layer of that factory, and the whole thing runs at the speed of its tightest bottleneck.</p>
+</header>
+
+<section>
+  <div>
+    <span class="eyebrow">1 · The stack</span>
+  </div>
+  <h2>Ten layers, top to bottom</h2>
+  <p class="sub">Read it top-down as "what the user sees" to "what physics allows". Highlighted layers are the ones that currently limit how many tokens the world can make.</p>
+  <div class="stackcap"><span>▲ what users buy</span><span>what physics allows ▼</span></div>
+  <div class="stack">
+    <div class="layer">
+      <div class="n">10</div>
+      <div><h3>Apps and tokens</h3><div class="what">ChatGPT, Claude, Copilot, agents. Priced per million tokens.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Cost per token and latency per token set what products are possible.</div></div>
+      <div class="chips"><span class="chip">OpenAI</span><span class="chip">Anthropic</span><span class="chip">Google</span><span class="chip">Meta</span></div>
+    </div>
+    <div class="layer">
+      <div class="n">09</div>
+      <div><h3>Models</h3><div class="what">Transformers. A model is billions of numbers (weights) that get multiplied against your input.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Bigger models and longer contexts need more memory per user.</div></div>
+      <div class="chips"><span class="chip">frontier labs</span><span class="chip">open weights</span></div>
+    </div>
+    <div class="layer">
+      <div class="n">08</div>
+      <div><h3>Software</h3><div class="what">CUDA, PyTorch, compilers, inference engines that batch many users onto one GPU.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">How close you get to the chip's theoretical peak. This is NVIDIA's deepest moat.</div></div>
+      <div class="chips"><span class="chip">CUDA</span><span class="chip">PyTorch</span><span class="chip">vLLM</span><span class="chip">JAX/XLA</span></div>
+    </div>
+    <div class="layer hot">
+      <div class="n">07</div>
+      <div><h3>Systems and networking</h3><div class="what">Chips wired into racks, racks into clusters. One model spans many GPUs.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Bandwidth between chips. A 72-GPU rack acts like one giant GPU only because of NVLink.</div></div>
+      <div class="chips"><span class="chip">NVLink</span><span class="chip">InfiniBand</span><span class="chip">Broadcom</span><span class="chip">Arista</span></div>
+    </div>
+    <div class="layer hot">
+      <div class="n">06</div>
+      <div><h3>Memory (HBM)</h3><div class="what">High-bandwidth memory stacked beside the compute die. Holds the weights and the KV cache.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Memory bandwidth, not math, caps how fast each token is generated.</div></div>
+      <div class="chips"><span class="chip">SK hynix</span><span class="chip">Samsung</span><span class="chip">Micron</span></div>
+    </div>
+    <div class="layer">
+      <div class="n">05</div>
+      <div><h3>Accelerator chips</h3><div class="what">GPUs and custom ASICs: thousands of small multiply units working in parallel.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">FLOPS per watt and per dollar. Die size is capped by the lithography reticle.</div></div>
+      <div class="chips"><span class="chip">NVIDIA</span><span class="chip">AMD</span><span class="chip">Google TPU</span><span class="chip">AWS Trainium</span></div>
+    </div>
+    <div class="layer hot">
+      <div class="n">04</div>
+      <div><h3>Fabs and packaging</h3><div class="what">Printing transistors on wafers, then bonding compute dies and HBM onto one package (CoWoS).</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Leading-edge capacity sits almost entirely at TSMC in Taiwan. Advanced packaging has been the tightest step.</div></div>
+      <div class="chips"><span class="chip">TSMC</span><span class="chip">Samsung</span><span class="chip">Intel</span></div>
+    </div>
+    <div class="layer">
+      <div class="n">03</div>
+      <div><h3>Tools and materials</h3><div class="what">Lithography, etch, deposition, inspection. Silicon wafers, gases, chemicals.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">EUV lithography has one supplier on Earth.</div></div>
+      <div class="chips"><span class="chip">ASML</span><span class="chip">Applied</span><span class="chip">Lam</span><span class="chip">TEL</span><span class="chip">KLA</span></div>
+    </div>
+    <div class="layer hot">
+      <div class="n">02</div>
+      <div><h3>Datacenter</h3><div class="what">Buildings, cooling, power distribution. Racks now draw over 100 kW and need liquid cooling.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Getting a site with power, cooling and permits. Long lead times on transformers and switchgear.</div></div>
+      <div class="chips"><span class="chip">Microsoft</span><span class="chip">Amazon</span><span class="chip">Oracle</span><span class="chip">CoreWeave</span><span class="chip">Vertiv</span></div>
+    </div>
+    <div class="layer hot">
+      <div class="n">01</div>
+      <div><h3>Energy</h3><div class="what">Electricity from the grid, on-site gas turbines, nuclear deals.</div></div>
+      <div><div class="lbl">Limit</div><div class="limit">Gigawatts available in the right place, soon enough. Grid connection queues run for years.</div></div>
+      <div class="chips"><span class="chip">utilities</span><span class="chip">GE Vernova</span><span class="chip">Siemens Energy</span><span class="chip">Constellation</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">2 · Chip to token</span>
+  <h2>What happens when you send a prompt</h2>
+  <p class="sub">One request, followed through the hardware. The two phases stress different parts of the chip, and that split explains most hardware design choices today.</p>
+  <div class="flow">
+    <div class="step"><span class="k">STEP 1</span><h3>Tokenize</h3><p>Text becomes a list of integer IDs, roughly ¾ of a word each.</p></div>
+    <div class="step"><span class="k">STEP 2</span><h3>Prefill</h3><p>All prompt tokens run through every layer at once. Huge matrix multiplies.</p><span class="tag c">compute-bound</span></div>
+    <div class="step"><span class="k">STEP 3</span><h3>KV cache</h3><p>Each layer saves keys and values for every token so they aren't recomputed. It grows with context length.</p><span class="tag m">fills memory</span></div>
+    <div class="step"><span class="k">STEP 4</span><h3>Decode</h3><p>One new token at a time. Each step re-reads all the weights plus the KV cache from HBM.</p><span class="tag m">memory-bound</span></div>
+    <div class="step"><span class="k">STEP 5</span><h3>Batch</h3><p>Serve many users per weight read to share the cost. More users per GPU means cheaper tokens but slower tokens for each.</p><span class="tag c">throughput vs latency</span></div>
+  </div>
+  <figure class="fig" style="margin:0">
+    <div class="scroll">
+    <svg class="wide" viewBox="0 0 900 330" role="img" aria-label="A GPU package: the compute die in the center on a silicon interposer, with four HBM stacks beside it streaming weights and KV cache into the die every decode step">
+      <defs>
+        <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--gold)"/></marker>
+        <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+      </defs>
+      <text x="20" y="24" font-size="12" fill="var(--muted)" letter-spacing="1">ONE GPU PACKAGE, SEEN FROM ABOVE</text>
+      <!-- substrate + interposer -->
+      <rect x="20" y="44" width="600" height="252" rx="6" fill="var(--pcb-soft)" stroke="var(--pcb)"/>
+      <text x="32" y="286" font-size="11" fill="var(--pcb)">package substrate</text>
+      <rect x="44" y="64" width="552" height="200" rx="4" fill="var(--bg)" stroke="var(--line)" stroke-dasharray="4 3"/>
+      <text x="56" y="256" font-size="11" fill="var(--muted)">silicon interposer (TSMC CoWoS)</text>
+      <!-- compute die -->
+      <rect x="220" y="84" width="200" height="150" rx="3" fill="var(--surface)" stroke="var(--ink)"/>
+      <g fill="var(--pcb)" opacity=".55" id="cores"></g>
+      <text x="232" y="224" font-size="11" fill="var(--ink)" font-weight="500">compute die · tensor cores</text>
+      <!-- HBM stacks -->
+      <g id="hbm"></g>
+      <!-- arrows -->
+      <g stroke="var(--gold)" stroke-width="2.4" fill="none" marker-end="url(#ar2)">
+        <path d="M172 118 L216 132"/><path d="M172 194 L216 180"/>
+        <path d="M468 118 L424 132"/><path d="M468 194 L424 180"/>
+      </g>
+      <!-- NVLink -->
+      <path d="M620 170 L680 170" stroke="var(--muted)" stroke-width="1.4" marker-end="url(#ar3)"/>
+      <text x="628" y="160" font-size="11" fill="var(--muted)">NVLink to</text>
+      <text x="628" y="190" font-size="11" fill="var(--muted)">other GPUs</text>
+      <!-- annotation -->
+      <g font-size="12">
+        <text x="700" y="80" fill="var(--gold)" font-weight="500">Every decode step</text>
+        <text x="700" y="102" fill="var(--ink)">read all weights</text>
+        <text x="700" y="120" fill="var(--ink)">+ every user's KV cache</text>
+        <text x="700" y="148" fill="var(--muted)">70B model, 8-bit</text>
+        <text x="700" y="166" fill="var(--muted)">≈ 70 GB per step</text>
+        <text x="700" y="184" fill="var(--muted)">÷ 8 TB/s (B200)</text>
+        <text x="700" y="202" fill="var(--muted)">≈ 9 ms per step</text>
+        <text x="700" y="230" fill="var(--ink)" font-weight="500">≈ 110 tokens/s max</text>
+        <text x="700" y="248" fill="var(--ink)">for a single user,</text>
+        <text x="700" y="266" fill="var(--ink)">however fast the math is</text>
+      </g>
+    </svg>
+    </div>
+    <figcaption>Gold arrows are the memory wall. The compute die could do the math for one decode step in well under a millisecond, but it has to wait for the bytes to arrive from HBM. That's why HBM stacks sit millimetres from the die on an interposer, and why packaging capacity limits GPU supply.</figcaption>
+  </figure>
+
+  <figure class="fig" style="margin:0">
+    <div class="charts">
+      <div><h3>Tokens/s the whole GPU produces</h3><svg id="c1" viewBox="0 0 400 230" role="img" aria-label="Total throughput rises from about 110 to about 3,800 tokens per second as batch grows from 1 to 90 users"></svg></div>
+      <div><h3>Tokens/s each user sees</h3><svg id="c2" viewBox="0 0 400 230" role="img" aria-label="Per-user speed falls from about 110 to about 43 tokens per second as batch grows from 1 to 90 users"></svg></div>
+    </div>
+    <figcaption>Throughput vs latency, from a simple model: one B200 (8 TB/s, 192 GB) serving a 70B model at 8-bit, each user holding a 4,000-token context (about 1.3 GB of KV cache). Adding users shares the weight read, so total output climbs ~35×, while each user slows ~2.5×. The curve stops at ~90 users because HBM is full. Longer contexts hit that wall sooner. Real servers add overheads, so treat the shape as the lesson, not the exact numbers.</figcaption>
+  </figure>
+
+  <div class="callout"><p><b>The core idea.</b> During decode, the chip spends most of its time waiting for bytes, not doing math. A GPU can do hundreds of multiplies for every byte it can fetch from HBM. That is why memory bandwidth, KV cache size and batching dominate inference economics, and why HBM makers and packaging became kingmakers.</p></div>
+</section>
+
+<section>
+  <span class="eyebrow">3 · Supply chain</span>
+  <h2>How a GPU gets built and powered</h2>
+  <p class="sub">Left to right, from sand to a running rack. Red boxes are chokepoints with one or very few suppliers.</p>
+  <div class="chain">
+    <svg viewBox="0 0 960 300" role="img" aria-label="Supply chain from design through fab, packaging, assembly, datacenter and power, with chokepoints at ASML, TSMC, CoWoS, HBM and grid power">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+      </defs>
+      <g font-size="11">
+        <!-- row 1 -->
+        <g>
+          <rect x="10" y="20" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="20" y="42" fill="var(--ink)" font-weight="500">Design</text>
+          <text x="20" y="58" fill="var(--muted)">NVIDIA, AMD,</text>
+          <text x="20" y="72" fill="var(--muted)">Google+Broadcom</text>
+        </g>
+        <g>
+          <rect x="10" y="110" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="20" y="132" fill="var(--ink)" font-weight="500">EDA + IP</text>
+          <text x="20" y="148" fill="var(--muted)">Synopsys,</text>
+          <text x="20" y="162" fill="var(--muted)">Cadence, Arm</text>
+        </g>
+        <g>
+          <rect x="10" y="200" width="130" height="64" rx="4" fill="var(--warn-soft)" stroke="var(--warn)"/>
+          <text x="20" y="222" fill="var(--ink)" font-weight="500">EUV tools</text>
+          <text x="20" y="238" fill="var(--muted)">ASML only</text>
+          <text x="20" y="252" fill="var(--muted)">(Netherlands)</text>
+        </g>
+        <g>
+          <rect x="180" y="110" width="140" height="64" rx="4" fill="var(--warn-soft)" stroke="var(--warn)"/>
+          <text x="190" y="132" fill="var(--ink)" font-weight="500">Wafer fab</text>
+          <text x="190" y="148" fill="var(--muted)">TSMC N4 / N3</text>
+          <text x="190" y="162" fill="var(--muted)">(Taiwan)</text>
+        </g>
+        <g>
+          <rect x="180" y="220" width="140" height="64" rx="4" fill="var(--warn-soft)" stroke="var(--warn)"/>
+          <text x="190" y="242" fill="var(--ink)" font-weight="500">HBM stacks</text>
+          <text x="190" y="258" fill="var(--muted)">SK hynix, Samsung,</text>
+          <text x="190" y="272" fill="var(--muted)">Micron</text>
+        </g>
+        <g>
+          <rect x="360" y="160" width="140" height="64" rx="4" fill="var(--warn-soft)" stroke="var(--warn)"/>
+          <text x="370" y="182" fill="var(--ink)" font-weight="500">Packaging</text>
+          <text x="370" y="198" fill="var(--muted)">TSMC CoWoS:</text>
+          <text x="370" y="212" fill="var(--muted)">die + HBM</text>
+        </g>
+        <g>
+          <rect x="540" y="160" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="550" y="182" fill="var(--ink)" font-weight="500">Boards, racks</text>
+          <text x="550" y="198" fill="var(--muted)">Foxconn, Quanta,</text>
+          <text x="550" y="212" fill="var(--muted)">Wistron, Dell</text>
+        </g>
+        <g>
+          <rect x="540" y="60" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="550" y="82" fill="var(--ink)" font-weight="500">Network + optics</text>
+          <text x="550" y="98" fill="var(--muted)">NVIDIA, Broadcom,</text>
+          <text x="550" y="112" fill="var(--muted)">Coherent</text>
+        </g>
+        <g>
+          <rect x="710" y="110" width="110" height="64" rx="4" fill="var(--pcb-soft)" stroke="var(--pcb)"/>
+          <text x="720" y="132" fill="var(--ink)" font-weight="500">Datacenter</text>
+          <text x="720" y="148" fill="var(--muted)">hyperscalers,</text>
+          <text x="720" y="162" fill="var(--muted)">neoclouds</text>
+        </g>
+        <g>
+          <rect x="710" y="220" width="110" height="64" rx="4" fill="var(--warn-soft)" stroke="var(--warn)"/>
+          <text x="720" y="242" fill="var(--ink)" font-weight="500">Power</text>
+          <text x="720" y="258" fill="var(--muted)">grid, gas,</text>
+          <text x="720" y="272" fill="var(--muted)">nuclear</text>
+        </g>
+        <g>
+          <rect x="850" y="110" width="100" height="64" rx="4" fill="var(--gold-soft)" stroke="var(--gold)"/>
+          <text x="860" y="132" fill="var(--ink)" font-weight="500">Tokens</text>
+          <text x="860" y="148" fill="var(--muted)">labs, APIs,</text>
+          <text x="860" y="162" fill="var(--muted)">apps</text>
+        </g>
+      </g>
+      <g stroke="var(--muted)" stroke-width="1.2" fill="none" marker-end="url(#ar)">
+        <path d="M140 52 C160 52 160 130 178 132"/>
+        <path d="M140 142 L178 142"/>
+        <path d="M140 232 C160 232 160 160 178 155"/>
+        <path d="M320 142 C340 142 340 185 358 188"/>
+        <path d="M320 252 C340 252 340 205 358 202"/>
+        <path d="M500 192 L538 192"/>
+        <path d="M670 192 C690 192 690 150 708 148"/>
+        <path d="M670 92 C690 92 690 130 708 132"/>
+        <path d="M765 220 L765 176"/>
+        <path d="M820 142 L848 142"/>
+      </g>
+    </svg>
+  </div>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--warn-soft);border:1px solid var(--warn)"></i>chokepoint</span>
+    <span><i class="sw" style="background:var(--pcb-soft);border:1px solid var(--pcb)"></i>where chips become a factory</span>
+    <span><i class="sw" style="background:var(--gold-soft);border:1px solid var(--gold)"></i>output</span>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">4 · Players</span>
+  <h2>Who owns which layer, and why it's hard to displace them</h2>
+  <div class="players">
+    <div class="pl"><h3>NVIDIA</h3><p>Designs GPUs, NVLink, networking, and full racks (GB200/GB300 NVL72). Fabless: TSMC makes the chips.</p><div class="moat"><b>Moat:</b> CUDA software ecosystem plus selling a whole system, not a chip.</div></div>
+    <div class="pl"><h3>TSMC</h3><p>Manufactures leading-edge chips for NVIDIA, AMD, Apple, Google, AWS. Also runs CoWoS packaging.</p><div class="moat"><b>Moat:</b> decades of process yield know-how. Almost no second source at the frontier.</div></div>
+    <div class="pl"><h3>ASML</h3><p>Only maker of EUV lithography machines, each costing well over $150M.</p><div class="moat"><b>Moat:</b> a supply chain of its own (Zeiss optics) that took 20+ years to build.</div></div>
+    <div class="pl"><h3>SK hynix, Samsung, Micron</h3><p>The three HBM makers. HBM uses far more wafer per bit than normal DRAM.</p><div class="moat"><b>Moat:</b> stacking yield. SK hynix has led on NVIDIA supply.</div></div>
+    <div class="pl"><h3>Hyperscalers</h3><p>Google (TPU), Amazon (Trainium), Microsoft (Maia), Meta (MTIA) build custom chips, often with Broadcom or Marvell.</p><div class="moat"><b>Why:</b> avoid NVIDIA's margins for workloads they fully control.</div></div>
+    <div class="pl"><h3>Challengers</h3><p>AMD (MI300/MI350 series) is the main merchant GPU alternative. Cerebras and Groq use very different chip designs.</p><div class="moat"><b>Hurdle:</b> software maturity and rack-scale systems, more than raw FLOPS.</div></div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">5 · Energy</span>
+  <h2>Where the watts go</h2>
+  <p class="sub">Power is now the slowest thing to add. A campus has to be connected to the grid, stepped down through large transformers, and cooled, before a single GPU switches on.</p>
+  <figure class="fig" style="margin:0">
+    <div class="pchain">
+      <div class="pn x">Generation<small>grid, gas turbines, nuclear</small></div><span class="ar">→</span>
+      <div class="pn x">Grid connection<small>multi-year queues</small></div><span class="ar">→</span>
+      <div class="pn x">Substation<small>transformers, long lead times</small></div><span class="ar">→</span>
+      <div class="pn">Switchgear + UPS<small>backup batteries, generators</small></div><span class="ar">→</span>
+      <div class="pn">Rack busbar<small>~120–130 kW per NVL72</small></div><span class="ar">→</span>
+      <div class="pn">GPU<small>~1 kW each</small></div>
+    </div>
+    <div class="powerbar" role="img" aria-label="Of 100 megawatts at the site fence, about 80 reach the IT equipment, about 15 go to cooling, about 5 are conversion losses and other overhead">
+      <div style="flex:80;background:var(--pcb);color:var(--bg)">~80 MW compute, memory, network</div>
+      <div style="flex:15;background:var(--gold-soft);color:var(--ink)">~15 cooling</div>
+      <div style="flex:5;background:var(--line);color:var(--ink)" title="conversion losses and other">~5</div>
+    </div>
+    <figcaption>For every 100 MW at the site fence, roughly 80 MW reaches the chips and 20 MW goes to cooling and losses (a PUE near 1.25 for a modern liquid-cooled site). Red boxes are where new capacity waits. All of that power ends up as heat, which is why AI racks moved from air to liquid cooling.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <span class="eyebrow">6 · Numbers to anchor on</span>
+  <h2>Orders of magnitude</h2>
+  <div class="tbl">
+    <table>
+      <thead><tr><th>Quantity</th><th>Rough value</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td>HBM bandwidth, H100 → B200</td><td class="num">3.4 → 8 TB/s</td><td>Directly sets decode speed per user.</td></tr>
+        <tr><td>HBM capacity per GPU, H100 → B200</td><td class="num">80 → 192 GB</td><td>How big a model and how much KV cache fits.</td></tr>
+        <tr><td>Math vs memory ratio (H100)</td><td class="num">~300 FLOPs per byte</td><td>Why decode leaves the math units idle unless you batch.</td></tr>
+        <tr><td>Power per NVL72 rack</td><td class="num">~120–130 kW</td><td>A normal server rack is 10–15 kW. Hence liquid cooling.</td></tr>
+        <tr><td>GPUs per gigawatt campus</td><td class="num">~400–500k</td><td>Gigawatt sites are the new unit of AI capacity.</td></tr>
+        <tr><td>KV cache for a 70B model</td><td class="num">~0.3 MB per token</td><td>A 100k-token context uses tens of GB for one user.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Values are approximate public figures, rounded to be memorable. Exact specs vary by variant and precision (FP8, FP4).</p>
+</section>
+
+<section class="dive" id="deep-dive-1">
+  <span class="eyebrow">7 · Deep dive 1</span>
+  <h2>Inside the model, the GPU and its memory</h2>
+  <p class="lede">Goal: by the end of this section you can redo the math in the GPU package diagram and explain the shape of the two batching charts yourself. Read the six parts in order; each one builds on the last.</p>
+
+  <!-- 7.1 -->
+  <div class="part">
+    <h3><span class="pn2">7.1</span>A model is a big pile of numbers</h3>
+    <p>A trained model is a list of numbers called <span class="term">weights</span> (or parameters). A "70B" model has 70 billion of them. Running the model means multiplying your input against those numbers. Nothing else is stored in the model: no text, no database, just weights.</p>
+    <p>How much memory that takes depends on how many bytes each number uses, which is the <span class="term">precision</span>. FP16 uses 2 bytes per number, FP8 uses 1, FP4 uses half a byte. Fewer bytes means a smaller model, less data to move, and faster math, at some cost in accuracy. Newer chips add hardware for lower precisions: Hopper (H100) added FP8, Blackwell (B200) added FP4.</p>
+    <figure class="fig" style="margin:0">
+      <div class="bars">
+        <div class="bar"><span>FP16 · 2 B</span><div class="track"><div class="fill" style="width:72.9%">140 GB</div><div class="cap"></div></div></div>
+        <div class="bar"><span>FP8 · 1 B</span><div class="track"><div class="fill" style="width:36.5%">70 GB</div><div class="cap"></div></div></div>
+        <div class="bar"><span>FP4 · 0.5 B</span><div class="track"><div class="fill" style="width:18.2%">35 GB</div><div class="cap"></div></div></div>
+      </div>
+      <figcaption>Weights of a 70B model at three precisions. The red dashed line is one B200's 192 GB of HBM. Whatever space the weights leave free is where the KV cache for users goes (7.3).</figcaption>
+    </figure>
+    <p class="gist">Model size in bytes = parameters × bytes per parameter. That is step 1 of the package math.</p>
+  </div>
+
+  <!-- 7.2 -->
+  <div class="part">
+    <h3><span class="pn2">7.2</span>How a transformer makes one token</h3>
+    <p>Text is split into <span class="term">tokens</span> (word pieces). Each token becomes a vector: a list of a few thousand numbers (8,192 for a 70B-class model) that the model can do math on. That vector then passes through a stack of identical <span class="term">layers</span>, 80 of them in a 70B model. Each layer has two parts:</p>
+    <p><b>Attention</b> lets the current token look back at every earlier token in the conversation and pull in what's relevant. This is how "it" knows which noun it refers to. <b>MLP</b> (the feed-forward block) then transforms the vector using most of the model's weights. This is where most of the model's stored knowledge acts.</p>
+    <p>After the last layer, the model outputs a score for every token in its vocabulary. One is picked, appended to the text, and the whole stack runs again for the next token. Generating a 500-token answer means running all 80 layers 500 times, one after another.</p>
+    <figure class="fig" style="margin:0">
+      <div class="scroll">
+      <svg class="wide" viewBox="0 0 900 364" role="img" aria-label="Transformer loop: input tokens become embedding vectors, pass through 80 layers each with attention and MLP, attention reads and writes the KV cache, the output is a probability over the vocabulary, one token is picked and fed back as input">
+        <defs><marker id="ar4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+        <marker id="ar5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--gold)"/></marker></defs>
+        <g font-size="12">
+          <rect x="16" y="110" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="28" y="134" fill="var(--ink)" font-weight="500">Tokens so far</text>
+          <text x="28" y="154" fill="var(--muted)">"The cat sat"</text>
+          <rect x="176" y="110" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="188" y="134" fill="var(--ink)" font-weight="500">Embedding</text>
+          <text x="188" y="154" fill="var(--muted)">8,192 numbers</text>
+          <!-- layer stack -->
+          <rect x="352" y="32" width="250" height="196" rx="5" fill="var(--pcb-soft)" stroke="var(--pcb)" opacity=".5"/>
+          <rect x="344" y="40" width="250" height="196" rx="5" fill="var(--pcb-soft)" stroke="var(--pcb)" opacity=".75"/>
+          <rect x="336" y="48" width="250" height="196" rx="5" fill="var(--pcb-soft)" stroke="var(--pcb)"/>
+          <text x="350" y="72" fill="var(--pcb)" font-weight="500">One layer (× 80)</text>
+          <rect x="350" y="92" width="104" height="60" rx="4" fill="var(--surface)" stroke="var(--ink)"/>
+          <text x="362" y="116" fill="var(--ink)" font-weight="500">Attention</text>
+          <text x="362" y="136" fill="var(--muted)">look back</text>
+          <rect x="470" y="92" width="104" height="60" rx="4" fill="var(--surface)" stroke="var(--ink)"/>
+          <text x="482" y="116" fill="var(--ink)" font-weight="500">MLP</text>
+          <text x="482" y="136" fill="var(--muted)">most weights</text>
+          <text x="440" y="184" fill="var(--muted)">both are mostly</text>
+          <text x="440" y="202" fill="var(--muted)">matrix × vector</text>
+          <text x="440" y="220" fill="var(--muted)">multiplies (7.4)</text>
+          <!-- KV -->
+          <rect x="350" y="268" width="130" height="44" rx="4" fill="var(--gold-soft)" stroke="var(--gold)"/>
+          <text x="362" y="288" fill="var(--ink)" font-weight="500">KV cache</text>
+          <text x="362" y="304" fill="var(--muted)">grows per token</text>
+          <path d="M402 154 L402 264" stroke="var(--gold)" stroke-width="2" marker-start="url(#ar5)" marker-end="url(#ar5)"/>
+          <!-- output -->
+          <rect x="626" y="110" width="130" height="64" rx="4" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="638" y="134" fill="var(--ink)" font-weight="500">Next-token odds</text>
+          <text x="638" y="154" fill="var(--muted)">~128k options</text>
+          <rect x="784" y="110" width="100" height="64" rx="4" fill="var(--gold-soft)" stroke="var(--gold)"/>
+          <text x="796" y="134" fill="var(--ink)" font-weight="500">Pick one</text>
+          <text x="796" y="154" fill="var(--muted)">"on"</text>
+        </g>
+        <g stroke="var(--muted)" stroke-width="1.4" fill="none" marker-end="url(#ar4)">
+          <path d="M146 142 L172 142"/><path d="M306 142 L332 142"/><path d="M454 122 L466 122"/>
+          <path d="M586 142 L622 142"/><path d="M756 142 L780 142"/>
+          <path d="M834 176 L834 330 L81 330 L81 178"/>
+        </g>
+        <text x="520" y="352" font-size="12" fill="var(--muted)">append it and run all 80 layers again</text>
+      </svg>
+      </div>
+      <figcaption>The decode loop. Each trip around produces one token, and every trip touches all 80 layers, which means all the weights. Attention reads the KV cache (the saved record of earlier tokens) and adds one new entry to it.</figcaption>
+    </figure>
+    <p><b>Prefill vs decode, again.</b> When your prompt first arrives, all its tokens go through the layers together in one big pass (prefill). After that, the model is stuck producing one token per trip around the loop (decode), because each new token depends on the one before it.</p>
+  </div>
+
+  <!-- 7.3 -->
+  <div class="part">
+    <h3><span class="pn2">7.3</span>The KV cache: the model's short-term memory</h3>
+    <p>For attention to "look back", each earlier token needs to be represented in every layer by two vectors, a <b>key</b> (what this token is about) and a <b>value</b> (what it contributes). Recomputing these for the whole conversation on every step would be wasteful, so they are computed once and stored in HBM. That store is the <span class="term">KV cache</span>.</p>
+    <p>It belongs to one conversation, it grows by one entry per token, and it must be read in full on every decode step. For a Llama-70B-style model the size per token works out like this:</p>
+    <div class="math">
+      <span class="i">a</span><span>K and V, per layer</span><span class="eq">2</span>
+      <span class="i">b</span><span>× layers</span><span class="eq">× 80</span>
+      <span class="i">c</span><span>× KV heads × numbers per head</span><span class="eq">× 8 × 128</span>
+      <span class="i">d</span><span>× bytes per number (FP16)</span><span class="eq">× 2</span>
+      <span class="res">≈ 0.33 MB per token. A 4,000-token conversation ≈ 1.3 GB. A 100,000-token one ≈ 33 GB.</span>
+    </div>
+    <p class="gist">Weights are shared by every user. The KV cache is per user. That difference drives the batching charts.</p>
+  </div>
+
+  <!-- 7.4 -->
+  <div class="part">
+    <h3><span class="pn2">7.4</span>The one operation that matters: multiply-add</h3>
+    <p>Almost all the work in a transformer is multiplying a vector by a weight matrix. Each weight gets used for exactly one multiply and one add per token. So a rule of thumb: <b>one token costs about 2 × parameters in math</b>, or 140 billion operations (GFLOP) for a 70B model.</p>
+    <p>The catch is that each weight has to travel from HBM to the compute cores before it can be used. With one user, a weight makes that trip to be used just once. With many users batched together, the vector becomes a matrix (one column per user) and the same weight, fetched once, is reused for every user.</p>
+    <figure class="fig" style="margin:0">
+      <div class="scroll"><svg class="wide" id="mv" viewBox="0 0 900 250" role="img" aria-label="Left: a weight matrix times a single user's vector, each weight used once. Right: the same matrix times four users' vectors, each weight used four times."></svg></div>
+      <figcaption>Same weights, same trip from HBM. Batching four users does four times the useful math per byte moved. The ratio of math to bytes moved is called <span class="term">arithmetic intensity</span>, and it is the single most useful number in this whole topic.</figcaption>
+    </figure>
+  </div>
+
+  <!-- 7.5 -->
+  <div class="part">
+    <h3><span class="pn2">7.5</span>Inside the GPU: a memory hierarchy</h3>
+    <p>A GPU is thousands of small multiply-add units (<span class="term">tensor cores</span>) grouped into blocks called <span class="term">SMs</span> (streaming multiprocessors; an H100 has 132). They are fed by a ladder of memories. Each step closer to the cores is faster but much smaller.</p>
+    <div class="tiers">
+      <div class="tier"><div><b>Registers + shared memory</b><div class="where">SRAM, inside each SM</div></div><div class="sz">~0.25 MB per SM<div class="meter" style="width:100%"></div></div><div class="an">The chef's cutting board. Right at hand, fastest, tiny.</div></div>
+      <div class="tier"><div><b>L2 cache</b><div class="where">SRAM, on the compute die</div></div><div class="sz">tens of MB<div class="meter" style="width:55%"></div></div><div class="an">The pantry. Shared by all SMs, still on the chip.</div></div>
+      <div class="tier"><div><b>HBM</b><div class="where">DRAM stacks, on the package</div></div><div class="sz">192 GB · 8 TB/s<div class="meter" style="width:20%"></div></div><div class="an">The walk-in fridge next door. Holds the weights and KV cache.</div></div>
+      <div class="tier"><div><b>Other GPUs, CPU memory</b><div class="where">NVLink, PCIe, network</div></div><div class="sz">TBs · slower per link<div class="meter" style="width:6%"></div></div><div class="an">The warehouse across town.</div></div>
+    </div>
+    <p class="note">Gold bar = relative speed, not to scale.</p>
+    <p><b>SRAM vs DRAM vs HBM.</b> <span class="term">SRAM</span> stores each bit in about six transistors built right into the logic chip. It's very fast and needs no refresh, but it takes lots of area, so there is only a little of it. <span class="term">DRAM</span> stores each bit as charge in a tiny capacitor with one transistor. It's dense and cheap, but slower, and it lives on separate memory chips. <span class="term">HBM</span> is DRAM with a different shape: 8 to 12 DRAM dies stacked vertically, joined by thousands of vertical wires, and placed a few millimetres from the GPU. A regular server memory channel is 64 bits wide. An HBM stack is 1,024 bits wide, so it moves far more bytes per second. That width is why it needs the interposer from the package diagram.</p>
+    <p class="gist">A model's weights (tens of GB) can't fit in SRAM (tens of MB), so every decode step streams them from HBM. HBM bandwidth is the speed limit.</p>
+  </div>
+
+  <!-- 7.6 -->
+  <div class="part">
+    <h3><span class="pn2">7.6</span>Putting it together: the roofline, the package math, the charts</h3>
+    <p>Every chip has two limits: how fast it can do math, and how fast it can move bytes. Divide one by the other and you get the chip's balance point. A B200 does about 4,500 trillion FP8 operations per second and moves 8 TB/s, so it needs roughly <b>560 operations per byte</b> to keep its math units busy. Below that, the chip is waiting on memory. The <span class="term">roofline</span> chart shows this: a sloped roof where memory limits you, and a flat roof where math does.</p>
+    <figure class="fig" style="margin:0">
+      <div class="scroll"><svg id="roof" class="wide" viewBox="0 0 820 330" role="img" aria-label="Roofline for a B200: achievable performance rises with arithmetic intensity until about 560 operations per byte, then flattens at about 4,500 TFLOPS. Decode with one user sits at 2 operations per byte and 16 TFLOPS. Decode with 90 users sits at 67 and 540 TFLOPS. Prefill of a 2,000-token prompt sits on the flat roof."></svg></div>
+      <figcaption>Log scales on both axes. Decode lives far left on the sloped, memory-limited part of the roof. Even with 90 users it only reaches about an eighth of the chip's math capacity, because the KV cache fills HBM before the batch gets big enough to reach the flat part. Prefill is easily math-limited.</figcaption>
+    </figure>
+
+    <p><b>The GPU package math, step by step.</b> One user, 70B model at FP8 on one B200:</p>
+    <div class="math">
+      <span class="i">1</span><span>Weights to read each step (7.1)</span><span class="eq">70B × 1 B = 70 GB</span>
+      <span class="i">2</span><span>Time to stream them from HBM</span><span class="eq">70 GB ÷ 8,000 GB/s ≈ 8.75 ms</span>
+      <span class="i">3</span><span>Math needed for one token (7.4)</span><span class="eq">2 × 70B = 140 GFLOP</span>
+      <span class="i">4</span><span>Time to do that math</span><span class="eq">140 GFLOP ÷ 4,500 TFLOP/s ≈ 0.03 ms</span>
+      <span class="i">5</span><span>The slower of the two sets the pace</span><span class="eq">≈ 8.75 ms per step</span>
+      <span class="res">1 ÷ 8.75 ms ≈ 114 steps a second, one token each, so about 110 tokens/s for a single user. The math units are idle about 99.7% of the time.</span>
+    </div>
+
+    <p><b>The batching charts, step by step.</b> Add users. Each decode step now reads the weights once, plus every user's KV cache (1.3 GB each at 4,000 tokens, from 7.3), and makes one token for each user.</p>
+    <div class="math">
+      <span class="i">↳</span><span>Bytes per step</span><span class="eq">70 GB + users × 1.3 GB</span>
+      <span class="i">↳</span><span>Step time</span><span class="eq">bytes ÷ 8 TB/s</span>
+      <span class="i">↳</span><span>Tokens/s each user sees</span><span class="eq">1 ÷ step time</span>
+      <span class="i">↳</span><span>Tokens/s for the whole GPU</span><span class="eq">users ÷ step time</span>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Users</th><th>Bytes per step</th><th>Step time</th><th>Each user</th><th>Whole GPU</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td class="num">71 GB</td><td class="num">8.9 ms</td><td class="num">112 tok/s</td><td class="num">112 tok/s</td></tr>
+          <tr><td class="num">8</td><td class="num">80 GB</td><td class="num">10.0 ms</td><td class="num">100 tok/s</td><td class="num">796 tok/s</td></tr>
+          <tr><td class="num">32</td><td class="num">112 GB</td><td class="num">14.0 ms</td><td class="num">72 tok/s</td><td class="num">2,294 tok/s</td></tr>
+          <tr><td class="num">64</td><td class="num">153 GB</td><td class="num">19.2 ms</td><td class="num">52 tok/s</td><td class="num">3,342 tok/s</td></tr>
+          <tr><td class="num">90</td><td class="num">187 GB</td><td class="num">23.4 ms</td><td class="num">43 tok/s</td><td class="num">3,850 tok/s</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Going from 1 to 8 users barely slows anyone down, because the weights dominate the bytes and they're shared. After that, each new user adds 1.3 GB of KV cache to every step, so everyone slows down. At about 90 users, 187 GB of the 192 GB is used and nobody else fits. That is the whole throughput vs latency tradeoff, and it all falls out of one division: bytes ÷ bandwidth.</p>
+    <p class="gist">This is why the industry cares so much about HBM bandwidth and capacity, lower precisions like FP8 and FP4 (fewer bytes), and tricks that shrink the KV cache. Each one moves a number in this table.</p>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">8 · Parking lot</span>
+  <h2>Questions we'll come back to</h2>
+  <div class="qs">
+    <div class="q"><span>What do NVIDIA, TSMC and ASML each do? Are they the three actors for three steps of building a GPU?</span><span class="st open">next</span></div>
+    <div class="q"><span>Terms: wafer, die size, reticle, interposer, B200, EDA + IP, EUV</span><span class="st part2">interposer in 7.5</span></div>
+    <div class="q"><span>The math in the one-GPU-package diagram</span><span class="st done">covered in 7.6</span></div>
+    <div class="q"><span>Neoclouds: who they are and how they differ from hyperscalers</span><span class="st open">open</span></div>
+    <div class="q"><span>HBM vs DRAM vs SRAM</span><span class="st done">covered in 7.5</span></div>
+    <div class="q"><span>TPU vs Trainium vs Maia vs MTIA vs NVIDIA</span><span class="st open">open</span></div>
+    <div class="q"><span>FP8 and FP4</span><span class="st part2">intro in 7.1</span></div>
+  </div>
+</section>
+
+<section>
+  <span class="eyebrow">9 · Go deeper</span>
+  <h2>Pick a thread to pull next</h2>
+  <div class="deeper">
+    <div class="dp"><h3>Why memory is the wall</h3><p>Roofline model, arithmetic intensity, why HBM is so hard to make.</p></div>
+    <div class="dp"><h3>Inside a GPU</h3><p>SMs, tensor cores, low precision (FP8/FP4), and what the reticle limit forces.</p></div>
+    <div class="dp"><h3>Training vs inference</h3><p>Why training needs huge clusters and inference is shifting the market.</p></div>
+    <div class="dp"><h3>Token economics</h3><p>Cost per million tokens from GPU price, power, utilization and batching.</p></div>
+    <div class="dp"><h3>Power and datacenters</h3><p>Gigawatt campuses, grid queues, gas vs nuclear, cooling.</p></div>
+    <div class="dp"><h3>Geopolitics</h3><p>Taiwan concentration, export controls, US and Japan fab buildouts.</p></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var NS="http://www.w3.org/2000/svg";
+  function el(tag,attrs,parent,txt){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(txt!=null)e.textContent=txt;parent.appendChild(e);return e;}
+  // tensor-core grid
+  var cores=document.getElementById("cores");
+  for(var r=0;r<5;r++)for(var c=0;c<8;c++)el("rect",{x:232+c*23,y:96+r*22,width:18,height:18,rx:2},cores);
+  // HBM stacks
+  var hbm=document.getElementById("hbm");
+  [[88,90],[88,166],[472,90],[472,166]].forEach(function(p){
+    el("rect",{x:p[0],y:p[1],width:80,height:56,rx:2,fill:"var(--gold-soft)",stroke:"var(--gold)"},hbm);
+    for(var i=1;i<8;i++)el("line",{x1:p[0],x2:p[0]+80,y1:p[1]+i*7,y2:p[1]+i*7,stroke:"var(--gold)","stroke-width":.6,opacity:.6},hbm);
+    el("text",{x:p[0]+40,y:p[1]+32,"text-anchor":"middle","font-size":11,fill:"var(--ink)","font-weight":500},hbm,"HBM");
+  });
+  // batching model: step time = (weights + b*kv) / bandwidth
+  var W=70,KV=1.3,BW=8000,pts=[];
+  for(var b=1;b<=90;b++){var t=(W+b*KV)/BW;pts.push({b:b,user:1/t,total:b/t});}
+  function chart(id,key,yMax,ticks,color){
+    var s=document.getElementById(id),L=52,R=388,T=12,B=196;
+    var x=function(v){return L+(v-1)/89*(R-L);},y=function(v){return B-v/yMax*(B-T);};
+    ticks.forEach(function(v){
+      el("line",{x1:L,x2:R,y1:y(v),y2:y(v),stroke:"var(--line)","stroke-width":1},s);
+      el("text",{x:L-6,y:y(v)+4,"text-anchor":"end","font-size":11,fill:"var(--muted)"},s,v>=1000?(v/1000)+"k":v);
+    });
+    [1,30,60,90].forEach(function(v){el("text",{x:x(v),y:B+16,"text-anchor":"middle","font-size":11,fill:"var(--muted)"},s,v);});
+    el("text",{x:(L+R)/2,y:B+32,"text-anchor":"middle","font-size":11,fill:"var(--muted)"},s,"users batched on one GPU");
+    var d=pts.map(function(p,i){return(i?"L":"M")+x(p.b).toFixed(1)+" "+y(p[key]).toFixed(1);}).join(" ");
+    el("path",{d:d+" L"+x(90)+" "+B+" L"+x(1)+" "+B+" Z",fill:color,opacity:.12},s);
+    el("path",{d:d,fill:"none",stroke:color,"stroke-width":2.2},s);
+    [pts[0],pts[89]].forEach(function(p,i){
+      el("circle",{cx:x(p.b),cy:y(p[key]),r:3.5,fill:color},s);
+      el("text",{x:x(p.b)+(i?-6:6),y:y(p[key])+(key==="total"&&!i?-8:(i?-8:14)),"text-anchor":i?"end":"start","font-size":11,fill:"var(--ink)","font-weight":500},s,Math.round(p[key]).toLocaleString());
+    });
+  }
+  chart("c1","total",4000,[0,1000,2000,3000,4000],"var(--pcb)");
+  chart("c2","user",120,[0,40,80,120],"var(--gold)");
+
+  // matrix x vector vs matrix x matrix
+  var mv=document.getElementById("mv");
+  function grid(x0,y0,cols,rows,fill,stroke){for(var r=0;r<rows;r++)for(var c=0;c<cols;c++)el("rect",{x:x0+c*22,y:y0+r*22,width:19,height:19,rx:2,fill:fill,stroke:stroke,"stroke-width":.8},mv);}
+  function mt(x,y,s,o){var a={x:x,y:y,"font-size":12,fill:"var(--muted)"};for(var k in o)a[k]=o[k];el("text",a,mv,s);}
+  function panel(ox,users,title,line1,line2){
+    mt(ox,20,title,{fill:"var(--ink)","font-weight":500});
+    grid(ox,40,6,6,"var(--gold-soft)","var(--gold)");
+    mt(ox,192,"weights (from HBM)");
+    mt(ox+140,110,"×",{"font-size":18,fill:"var(--ink)"});
+    grid(ox+160,40,users,6,"var(--pcb-soft)","var(--pcb)");
+    mt(ox+160,192,users===1?"1 user":users+" users");
+    var ex=ox+160+users*22+10;
+    mt(ex,110,"=",{"font-size":18,fill:"var(--ink)"});
+    grid(ex+20,40,users,6,"var(--surface)","var(--ink)");
+    mt(ex+20,192,"results");
+    mt(ox,222,line1,{fill:"var(--ink)"});
+    mt(ox,240,line2);
+  }
+  panel(20,1,"One user (decode, batch of 1)","36 weights moved, 36 multiply-adds","each weight used once");
+  panel(470,4,"Four users batched","36 weights moved, 144 multiply-adds","each weight used 4 times");
+
+  // roofline
+  var rf=document.getElementById("roof"),L2=78,R2=790,T2=20,B2=270;
+  var lx=function(v){return L2+Math.log10(v)/4*(R2-L2);},ly=function(v){return B2-Math.log10(v)/4*(B2-T2);};
+  function rt(x,y,s,o){var a={x:x,y:y,"font-size":11,fill:"var(--muted)"};for(var k in o)a[k]=o[k];el("text",a,rf,s);}
+  [1,10,100,1000,10000].forEach(function(v){
+    el("line",{x1:lx(v),x2:lx(v),y1:T2,y2:B2,stroke:"var(--line)"},rf);
+    el("line",{x1:L2,x2:R2,y1:ly(v),y2:ly(v),stroke:"var(--line)"},rf);
+    rt(lx(v),B2+16,v.toLocaleString(),{"text-anchor":"middle"});
+    rt(L2-8,ly(v)+4,v.toLocaleString(),{"text-anchor":"end"});
+  });
+  rt((L2+R2)/2,B2+36,"arithmetic intensity: operations per byte moved from HBM",{"text-anchor":"middle"});
+  rt(14,(T2+B2)/2,"TFLOPS achieved",{transform:"rotate(-90 14 "+((T2+B2)/2)+")","text-anchor":"middle"});
+  var ridge=562.5;
+  el("line",{x1:lx(ridge),x2:lx(ridge),y1:ly(4500),y2:B2,stroke:"var(--muted)","stroke-dasharray":"4 4"},rf);
+  rt(lx(ridge)+6,B2-8,"balance point ≈ 560");
+  el("path",{d:"M"+lx(1)+" "+ly(8)+" L"+lx(ridge)+" "+ly(4500)+" L"+lx(10000)+" "+ly(4500),fill:"none",stroke:"var(--ink)","stroke-width":2.4},rf);
+  rt(lx(4),ly(60),"memory-limited: 8 TB/s × intensity",{fill:"var(--ink)",transform:"rotate(-19.5 "+lx(4)+" "+ly(60)+")"});
+  rt(lx(900),ly(4500)-10,"math-limited: ~4,500 TFLOPS (FP8)",{fill:"var(--ink)"});
+  [[1.96,15.7,"decode · 1 user","var(--gold)",8,-10],[67,539,"decode · 90 users","var(--gold)",10,16],[4000,4500,"prefill · 2k-token prompt","var(--pcb)",-8,24]].forEach(function(p){
+    el("circle",{cx:lx(p[0]),cy:ly(p[1]),r:6,fill:p[3],stroke:"var(--surface)","stroke-width":2},rf);
+    rt(lx(p[0])+p[4],ly(p[1])+p[5],p[2],{fill:"var(--ink)","font-weight":500,"text-anchor":p[4]<0?"end":"start"});
+  });
+})();
+</script>
+
+</body></html>
